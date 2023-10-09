@@ -12,6 +12,9 @@ namespace Juice.BgService.Tests
             ScheduleOptions.OccursInterval(TimeSpan.FromSeconds(3));
         }
 
+        public override void Configure(IServiceModel model)
+        {
+        }
         public override Task<(bool Healthy, string Message)> HealthCheckAsync() =>
             Task.FromResult((true, ""));
 

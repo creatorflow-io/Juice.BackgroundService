@@ -14,6 +14,7 @@ namespace Juice.BgService.Tests
             _options = options.Value;
         }
 
+        public override void Configure(IServiceModel model) { }
         public override Task<(bool Healthy, string Message)> HealthCheckAsync() => throw new NotImplementedException();
 
         public override async Task OnFileDeletedAsync(FileSystemEventArgs e)
