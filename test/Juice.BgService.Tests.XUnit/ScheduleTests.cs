@@ -20,18 +20,14 @@ namespace Juice.BgService.Tests.XUnit
             {
                 OccursOnceAt = new TimeSpan(10, 0, 0)
             };
-
             var now = DateTimeOffset.Now;
-            if (now.Hour > 10)
-            {
-                now = now.AddDays(1);
-            }
-            var nextOccurs = daily.NextOccursAt(null);
+            var last = new DateTimeOffset(now.Date, now.Offset).AddHours(10);
+            var nextOccurs = daily.NextOccursAt(last);
 
-            nextOccurs.Should().Be(now.Date.AddHours(10));
+            nextOccurs.Should().Be(last.AddDays(1));
             var nextOccurs1 = daily.NextOccursAt(nextOccurs);
 
-            nextOccurs1.Should().Be(now.Date.AddHours(10).AddDays(1));
+            nextOccurs1.Should().Be(last.AddDays(2));
         }
 
         [Fact]
