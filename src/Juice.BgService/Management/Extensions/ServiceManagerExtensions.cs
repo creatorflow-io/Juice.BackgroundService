@@ -2,7 +2,7 @@
 {
     public static class ServiceManagerExtensions
     {
-        private static IManagedService GetService(this ServiceManager manager, Guid id)
+        private static IManagedService GetService(this IServiceManager manager, Guid id)
         {
             if (id == Guid.Empty)
             {
@@ -16,19 +16,19 @@
             return service;
         }
 
-        public static Task StartAsync(this ServiceManager manager, Guid id, CancellationToken cancellationToken)
+        public static Task StartAsync(this IServiceManager manager, Guid id, CancellationToken cancellationToken)
             => manager.GetService(id).StartAsync(cancellationToken);
 
-        public static Task StopAsync(this ServiceManager manager, Guid id, CancellationToken cancellationToken)
+        public static Task StopAsync(this IServiceManager manager, Guid id, CancellationToken cancellationToken)
             => manager.GetService(id).StopAsync(cancellationToken);
 
-        public static Task RequestStopAsync(this ServiceManager manager, Guid id, CancellationToken cancellationToken)
+        public static Task RequestStopAsync(this IServiceManager manager, Guid id, CancellationToken cancellationToken)
             => manager.GetService(id).RequestStopAsync(cancellationToken);
 
-        public static Task RestartAsync(this ServiceManager manager, Guid id, CancellationToken cancellationToken)
+        public static Task RestartAsync(this IServiceManager manager, Guid id, CancellationToken cancellationToken)
             => manager.GetService(id).RestartAsync(cancellationToken);
 
-        public static Task RequestRestartAsync(this ServiceManager manager, Guid id, CancellationToken cancellationToken)
+        public static Task RequestRestartAsync(this IServiceManager manager, Guid id, CancellationToken cancellationToken)
             => manager.GetService(id).RequestRestartAsync(cancellationToken);
     }
 }

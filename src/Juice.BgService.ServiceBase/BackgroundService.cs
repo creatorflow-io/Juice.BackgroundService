@@ -2,7 +2,7 @@
 
 namespace Juice.BgService
 {
-    public abstract class BackgroundService : ManagedService, IManagedService<IServiceModel>
+    public abstract class BackgroundService : ManagedService
     {
 
         protected IDisposable? _logScope;
@@ -44,7 +44,6 @@ namespace Juice.BgService
             }
         }
 
-        public abstract void Configure(IServiceModel model);
         #endregion
 
     }

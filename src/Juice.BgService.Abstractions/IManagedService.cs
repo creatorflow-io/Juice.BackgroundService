@@ -25,7 +25,7 @@
     }
 
     public interface IManagedService<TModel> : IManagedService
-        where TModel : IServiceModel
+        where TModel : class, IServiceModel
     {
         void Configure(TModel model);
     }

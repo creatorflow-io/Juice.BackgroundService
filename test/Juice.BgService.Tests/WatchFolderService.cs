@@ -8,13 +8,13 @@ using Microsoft.Extensions.Options;
 namespace Juice.BgService.Tests
 {
     public class WatchFolderService : FileWatcherService
+
     {
         public WatchFolderService(ILogger<WatchFolderService> logger, IOptions<FileWatcherServiceOptions> options) : base(logger)
         {
             _options = options.Value;
         }
 
-        public override void Configure(IServiceModel model) { }
         public override Task<(bool Healthy, string Message)> HealthCheckAsync() => throw new NotImplementedException();
 
         public override async Task OnFileDeletedAsync(FileSystemEventArgs e)

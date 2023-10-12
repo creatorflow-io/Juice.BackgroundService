@@ -159,7 +159,7 @@ namespace Juice.BgService.FileWatcher
         private void OnRenamed(object source, RenamedEventArgs e)
         {
             // Specify what is done when a file is renamed.
-            var filter = _options.FileFilter;
+            var filter = _options?.FileFilter;
 
             if (string.IsNullOrEmpty(filter)
                 || Regex.IsMatch(e.FullPath, filter, RegexOptions.IgnoreCase)
@@ -192,15 +192,17 @@ namespace Juice.BgService.FileWatcher
         protected async Task<bool> FileIsReadyAsync(string filePath, int timeout = 5000)
         {
             var start = DateTimeOffset.Now;
-            while (!_shutdown.IsCancellationRequested)
+            while (!(_shutdown?.IsCancellationRequested ?? true))
             {
                 try
                 {
                     if (File.Exists(filePath))
+                    {
                         using (var file = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                         {
                             return true;
                         }
+                    }
                 }
                 catch (Exception)
                 {
@@ -216,7 +218,7 @@ namespace Juice.BgService.FileWatcher
 
         protected List<string> DirSearch(string sDir, string filter)
         {
-            List<String> files = new List<String>();
+            List<string> files = new List<string>();
 
             files.AddRange(Directory.GetFiles(sDir).Where(f => string.IsNullOrEmpty(filter) || Regex.IsMatch(f, filter, RegexOptions.IgnoreCase)));
             foreach (string d in Directory.GetDirectories(sDir))

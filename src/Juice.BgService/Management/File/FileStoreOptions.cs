@@ -1,7 +1,8 @@
 ﻿namespace Juice.BgService.Management.File
 {
-    public class FileStoreOptions
+    public class FileStoreOptions<TModel>
+        where TModel : class, IServiceModel
     {
-        public ServiceModel[] Services { get; set; }
+        public TModel[] Services { get; set; }
     }
 }

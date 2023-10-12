@@ -16,7 +16,8 @@ namespace Juice.BgService.Management
             _logger = serviceProvider.GetRequiredService<ILogger<ServiceFactory>>();
         }
 
-        public IManagedService? CreateService(string typeAssemblyQualifiedName)
+        public IManagedService? CreateService<TModel>(string typeAssemblyQualifiedName)
+            where TModel : class, IServiceModel
         {
             try
             {
@@ -24,7 +25,7 @@ namespace Juice.BgService.Management
                 if (type != null && type.IsAssignableTo(typeof(IManagedService)))
                 {
                     _logger.LogInformation($"Found {type.Name} in app services");
-                    return CreateService(type, _serviceProvider);
+                    return CreateService<TModel>(type, _serviceProvider);
                 }
             }
             catch (Exception)
@@ -45,7 +46,7 @@ namespace Juice.BgService.Management
                 {
                     var t = p.GetType(typeAssemblyQualifiedName);
                     var r = t != null && t.IsAssignableTo(typeof(IManagedService))
-                        ? CreateService(t, p.ServiceProvider!) : default;
+                        ? CreateService<TModel>(t, p.ServiceProvider!) : default;
                     if (r != null)
                     {
                         _logger.LogInformation($"Found {t!.Name} in plugin {p.Name}");
@@ -94,7 +95,8 @@ namespace Juice.BgService.Management
                 }) ?? false;
         }
 
-        private static IManagedService? CreateService(Type type, IServiceProvider serviceProvider)
+        private static IManagedService? CreateService<TModel>(Type type, IServiceProvider serviceProvider)
+            where TModel : class, IServiceModel
         {
             if (type.IsAssignableTo(typeof(IManagedService)))
             {
@@ -103,6 +105,11 @@ namespace Juice.BgService.Management
                                .Select(p => p.ParameterType.IsAssignableFrom(typeof(IServiceProvider))
                                    ? serviceProvider : serviceProvider.GetRequiredService(p.ParameterType))
                                .ToArray();
+
+                if (type.ContainsGenericParameters)
+                {
+                    return (IManagedService?)Activator.CreateInstance(type.MakeGenericType(typeof(TModel)), serviceArgs);
+                }
                 return (IManagedService?)Activator.CreateInstance(type, serviceArgs);
             }
             return default;

@@ -12,6 +12,7 @@
     <ProjectReference Include="..\..\src\Juice.BgService.Api\Juice.BgService.Api.csproj" />
     <ProjectReference Include="..\..\src\Juice.BgService.ServiceBase\Juice.BgService.ServiceBase.csproj" />
     <ProjectReference Include="..\..\src\Juice.BgService\Juice.BgService.csproj" />
+    <ProjectReference Include="..\Juice.BgService.Tests.Shared\Juice.BgService.Tests.Shared.csproj" />
   </ItemGroup>
 
 </Project>

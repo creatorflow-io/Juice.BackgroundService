@@ -1,8 +1,11 @@
 ﻿using FluentAssertions;
+using Juice.BgService.Extensions.Logging;
 using Juice.BgService.Management;
 using Juice.Extensions.DependencyInjection;
+using Juice.Plugins.Loader;
 using Juice.Plugins.Management;
 using Juice.XUnit;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
@@ -146,11 +149,30 @@ namespace Juice.BgService.Tests.XUnit
                 }
             }
             plugins.Count().Should().Be(1);
+
             plugins.Count(p => p.IsInitialized).Should().Be(1);
 
+            var aplugin = plugins.First();
+            var pConfiguration = aplugin.ServiceProvider?.GetRequiredService<IPluginConfiguration>();
+            if (pConfiguration is PluginConfiguration pc)
+            {
+                _output.WriteLine(pc.CurrentDirectory);
+                var configuration = pc.GetConfiguration(GetType().Assembly);
+                var options = configuration.GetSection("Logging:File").Get<FileLoggerOptions>();
+            }
+
+            _output.WriteLine(typeof(ServiceManager<ServiceModel>).Name);
+
             var serviceFactory = serviceProvider.GetRequiredService<IServiceFactory>();
-            var service = serviceFactory.CreateService("Juice.BgService.Tests.RecurringService");
+            var service = serviceFactory.CreateService<ServiceModel>("Juice.BgService.Tests.RecurringService`1");
             service.Should().NotBeNull();
+
+            if (service is IManagedService<ServiceModel> service1)
+            {
+                service1.SetDescription("xunit");
+                service1.Configure(new ServiceModel { Name = "foo" });
+            }
+
         }
 
 

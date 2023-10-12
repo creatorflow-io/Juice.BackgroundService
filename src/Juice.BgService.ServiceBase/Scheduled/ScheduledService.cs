@@ -10,7 +10,7 @@ namespace Juice.BgService.Scheduled
 
         public bool SkipWaiting { get; protected set; }
 
-        private CancellationTokenSource _waitCancel;
+        private CancellationTokenSource? _waitCancel;
 
 
         protected ScheduledServiceOptions _scheduleOptions = new ScheduledServiceOptions();

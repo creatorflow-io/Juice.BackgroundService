@@ -19,9 +19,8 @@ builder.Logging.AddBgServiceFileLogger(builder.Configuration.GetSection("Logging
 builder.Services.Configure<FileWatcherServiceOptions>(options => { options.MonitorPath = @"C:\Workspace\WatchFolder"; options.FileFilter = "."; });
 
 builder.Services.AddBgService(builder.Configuration.GetSection("BackgroundService"))
-    .UseFileStore(builder.Configuration.GetSection("File"));
-
-builder.SeparateStoreFile("Store");
+    .UseFileStore(builder.Configuration.GetSection("File"))
+    .SeparateStoreFile("Store", builder.Configuration, builder.Environment.EnvironmentName);
 
 builder.Services.UseOptionsMutableFileStore("appsettings.Development.json");
 
@@ -68,7 +67,7 @@ app.UseBgServiceSwaggerUI();
 app.Lifetime.ApplicationStopping.Register(async () =>
 {
     Console.WriteLine($"Trying to stop services...");
-    var service = app.Services.GetService<ServiceManager>();
+    var service = app.Services.GetService<IServiceManager>();
     if (service != null)
     {
         try
