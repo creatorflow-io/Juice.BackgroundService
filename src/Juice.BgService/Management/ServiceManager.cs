@@ -5,9 +5,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Juice.BgService.Management
 {
-    public class ServiceManager : ManagedService, IManagedService<IServiceModel>, IHostedService
+    public class ServiceManager<TModel> : ManagedService, IServiceManager, IManagedService<TModel>, IHostedService
+        where TModel : class, IServiceModel
     {
-        private readonly IServiceRepository _serviceStore;
+        private readonly IServiceRepository<TModel> _serviceStore;
         private readonly IServiceFactory _serviceFactory;
 
         public List<IManagedService> ManagedServices => _services;
@@ -21,9 +22,9 @@ namespace Juice.BgService.Management
 
         public ServiceManager(
             IOptionsMutable<ServiceManagerOptions> options,
-            ILogger<ServiceManager> logger,
+            ILogger<ServiceManager<TModel>> logger,
             IServiceFactory serviceFactory,
-            IServiceRepository serviceStore) : base()
+            IServiceRepository<TModel> serviceStore) : base()
         {
             _options = options;
             _logger = logger;
@@ -160,7 +161,7 @@ namespace Juice.BgService.Management
         {
             Logging($"Trying to receive services model");
 
-            var services = await _serviceStore.GetServicesModelAsync(_shutdown.Token);
+            var services = await _serviceStore.GetServicesModelAsync(_shutdown?.Token ?? default);
 
             if (services != null)
             {
@@ -184,17 +185,10 @@ namespace Juice.BgService.Management
                     }
                     for (var i = 0; i < threads; i++)
                     {
-                        var bgService = _serviceFactory.CreateService(service.AssemblyQualifiedName);
+                        var bgService = _serviceFactory.CreateService<TModel>(service.AssemblyQualifiedName);
 
                         if (bgService != null)
                         {
-                            #region Configure
-                            if (bgService is IManagedService<IServiceModel> configurableService)
-                            {
-                                configurableService.Configure(service);
-                            }
-                            #endregion
-
                             #region Description
                             if (threads > 1)
                             {
@@ -203,6 +197,13 @@ namespace Juice.BgService.Management
                             else
                             {
                                 bgService.SetDescription(service.Name);
+                            }
+                            #endregion
+
+                            #region Configure
+                            if (bgService is IManagedService<TModel> configurableService)
+                            {
+                                configurableService.Configure(service);
                             }
                             #endregion
 
@@ -282,7 +283,7 @@ namespace Juice.BgService.Management
             GC.Collect();
         }
         public override Task<(bool Healthy, string Message)> HealthCheckAsync() => throw new NotImplementedException();
-        public void Configure(IServiceModel model)
+        public void Configure(TModel model)
         {
             Description = model.Name;
         }

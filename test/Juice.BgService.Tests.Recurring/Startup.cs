@@ -16,7 +16,7 @@ namespace Juice.BgService.Tests.Recurring
                 builder.AddConfiguration(configuration.GetSection("Logging"));
             });
 
-            var logger = services.BuildServiceProvider().GetRequiredService<ILogger<RecurringService>>();
+            var logger = services.BuildServiceProvider().GetRequiredService<ILoggerFactory>();
         }
     }
 }

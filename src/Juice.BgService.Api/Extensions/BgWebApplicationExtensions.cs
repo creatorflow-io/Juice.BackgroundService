@@ -1,7 +1,4 @@
-﻿using Juice.BgService.Management.File;
-using Juice.Extensions.Options;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Builder;
 
 namespace Juice.BgService.Api
 {
@@ -17,13 +14,5 @@ namespace Juice.BgService.Api
             });
         }
 
-
-        public static void SeparateStoreFile(this WebApplicationBuilder builder, string name)
-        {
-            builder.Services.UseOptionsMutableFileStore<FileStoreOptions>($"appsettings.{name}.{builder.Environment.EnvironmentName}.json");
-
-            builder.Configuration.AddJsonFile($"appsettings.{name}.{builder.Environment.EnvironmentName}.json");
-
-        }
     }
 }

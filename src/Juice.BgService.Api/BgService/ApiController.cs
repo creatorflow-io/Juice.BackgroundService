@@ -10,9 +10,9 @@ namespace Juice.BgService.Api
     [Route("bgservice/api")]
     public class ApiController : Controller
     {
-        private ServiceManager _serviceManager;
+        private IServiceManager _serviceManager;
 
-        public ApiController(ServiceManager serviceManager)
+        public ApiController(IServiceManager serviceManager)
         {
             _serviceManager = serviceManager;
         }

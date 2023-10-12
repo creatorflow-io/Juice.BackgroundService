@@ -2,11 +2,12 @@
 
 namespace Juice.BgService.Management.File
 {
-    public class FileStore : IServiceRepository
+    public class FileStore<TModel> : IServiceRepository<TModel>
+        where TModel : class, IServiceModel
     {
 
-        private IOptionsMonitor<FileStoreOptions> _optionsMonitor;
-        public FileStore(IOptionsMonitor<FileStoreOptions> optionsMonitor)
+        private IOptionsMonitor<FileStoreOptions<TModel>> _optionsMonitor;
+        public FileStore(IOptionsMonitor<FileStoreOptions<TModel>> optionsMonitor)
         {
             _optionsMonitor = optionsMonitor;
             _optionsMonitor.OnChange((options) =>
@@ -21,8 +22,9 @@ namespace Juice.BgService.Management.File
 
         public event EventHandler<EventArgs> OnChanged;
 
-        public async Task<IEnumerable<IServiceModel>> GetServicesModelAsync(CancellationToken token)
+        public async Task<IEnumerable<TModel>> GetServicesModelAsync(CancellationToken token)
         {
+            await Task.Yield();
             return _optionsMonitor.CurrentValue.Services;
         }
     }

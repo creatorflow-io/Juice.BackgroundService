@@ -1,20 +1,20 @@
 ﻿using System.Diagnostics;
 using Juice.BgService.Scheduled;
+using Juice.BgService.Tests.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Juice.BgService.Tests
 {
-    public class RecurringService<TModel> : ScheduledService, IManagedService<TModel>
-        where TModel : class, IServiceModel
+    public class RecurringService1 : ScheduledService, IManagedService<CustomServiceModel>
     {
-        public RecurringService(IServiceProvider serviceProvider) : base(serviceProvider.GetRequiredService<ILogger<RecurringService<TModel>>>())
+        public RecurringService1(IServiceProvider serviceProvider) : base(serviceProvider.GetRequiredService<ILogger<RecurringService1>>())
         {
             ScheduleOptions.OccursInterval(TimeSpan.FromSeconds(3));
         }
 
-        public void Configure(TModel model)
+        public void Configure(CustomServiceModel model)
         {
             _logger.LogInformation("Configure {0}", JsonConvert.SerializeObject(model));
         }

@@ -3,7 +3,8 @@
     public interface IServiceFactory
     {
         //IManagedService? CreateService(Type type);
-        IManagedService? CreateService(string typeAssemblyQualifiedName);
+        IManagedService? CreateService<TModel>(string typeAssemblyQualifiedName)
+            where TModel : class, IServiceModel;
         bool IsServiceExists(string typeAssemblyQualifiedName);
     }
 }
