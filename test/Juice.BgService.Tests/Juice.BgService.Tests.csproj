@@ -9,10 +9,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="obj\**" />
+    <Content Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\Juice.BgService.Api\Juice.BgService.Api.csproj" />
     <ProjectReference Include="..\..\src\Juice.BgService.ServiceBase\Juice.BgService.ServiceBase.csproj" />
     <ProjectReference Include="..\..\src\Juice.BgService\Juice.BgService.csproj" />
     <ProjectReference Include="..\Juice.BgService.Tests.Shared\Juice.BgService.Tests.Shared.csproj" />
   </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="$(MicrosoftExtensionsVersion)" />
+    </ItemGroup>
 
 </Project>
