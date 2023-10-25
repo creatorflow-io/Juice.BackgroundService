@@ -179,11 +179,9 @@ namespace Juice.BgService.Extensions.Logging
 
             // Create a linked token so we can trigger cancellation outside of this token's cancellation
             _shutdown = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            _backgroundTask = ExecuteAsync();
+            _backgroundTask = Task.Run(ExecuteAsync);
 
-            return _backgroundTask.IsCompleted ? _backgroundTask : Task.CompletedTask;
-
-
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -194,7 +192,7 @@ namespace Juice.BgService.Extensions.Logging
         public virtual async Task StopAsync(CancellationToken cancellationToken)
         {
             // Stop called without start
-            if (_backgroundTask == null)
+            if (_backgroundTask == null || _backgroundTask.IsCompleted)
             {
                 return;
             }
@@ -225,6 +223,12 @@ namespace Juice.BgService.Extensions.Logging
                 }
                 catch (TaskCanceledException) { }
             }
+
+            try
+            {
+                await WriteFromQueueAsync();
+            }
+            catch (Exception) { }
         }
         #endregion
 

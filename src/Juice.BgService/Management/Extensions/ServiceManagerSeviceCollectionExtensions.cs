@@ -52,6 +52,7 @@ namespace Juice.BgService.Management
         {
             if (string.IsNullOrEmpty(env))
             {
+
                 builder.Services.UseOptionsMutableFileStore<FileStoreOptions<TModel>>($"appsettings.{name}.json");
                 configuration.AddJsonFile($"appsettings.{name}.json");
             }

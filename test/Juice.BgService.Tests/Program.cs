@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Juice.BgService.Api;
 using Juice.BgService.Extensions.Logging;
 using Juice.BgService.FileWatcher;
@@ -10,7 +12,15 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-var builder = WebApplication.CreateBuilder(args);
+var isService = !(Debugger.IsAttached || args.Contains("--console"));
+
+WebApplicationOptions options = new()
+{
+    ContentRootPath = AppContext.BaseDirectory,
+    Args = args.Where(arg => arg != "--console").ToArray()
+};
+
+var builder = WebApplication.CreateBuilder(options);
 
 builder.Logging.AddBgServiceFileLogger(builder.Configuration.GetSection("Logging:File"));
 
@@ -31,7 +41,7 @@ builder.Services.AddSwaggerWithDefaultConfigs()
 
 var pluginPaths = new string[]
 {
-    GetPluginPath("Recurring")
+    GetPluginPath("Recurring", isService)
 };
 
 builder.Services.AddPlugins(options =>
@@ -42,8 +52,14 @@ builder.Services.AddPlugins(options =>
     };
 });
 
-
-builder.Host.UseConsoleLifetime();
+if (isService)
+{
+    builder.Host.UseWindowsService();
+}
+else
+{
+    builder.Host.UseConsoleLifetime();
+}
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
@@ -82,11 +98,12 @@ app.Lifetime.ApplicationStopping.Register(async () =>
     }
 });
 
-app.Run();
+await app.RunAsync();
 
 
-static string GetPluginPath(string pluginName)
+static string GetPluginPath(string pluginName, bool isService)
 {
 
-    return Path.GetFullPath(Path.Combine("..\\..\\test", "plugins", pluginName.ToLower(), $"Juice.BgService.Tests.{pluginName}.dll"));
+    return isService ? Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..\\plugins", pluginName.ToLower(), $"Juice.BgService.Tests.{pluginName}.dll"))
+        : Path.GetFullPath(Path.Combine("..\\..\\test", "plugins", pluginName.ToLower(), $"Juice.BgService.Tests.{pluginName}.dll"));
 }
