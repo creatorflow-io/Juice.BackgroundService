@@ -13,8 +13,9 @@ namespace Juice.BgService.Extensions.Logging
         private int _retainPolicyFileCount = 50;
         private int _maxFileSize = 5 * 1024 * 1024;
         private int _counter = 0;
+        private TimeSpan _bufferTime;
 
-        public FileLogger(string? directory, int? retainPolicyFileCount, int? maxFileSize)
+        public FileLogger(string? directory, int? retainPolicyFileCount, int? maxFileSize, TimeSpan? bufferTime)
         {
             if (retainPolicyFileCount.HasValue)
             {
@@ -25,6 +26,7 @@ namespace Juice.BgService.Extensions.Logging
                 _maxFileSize = maxFileSize.Value;
             }
             _directory = directory ?? "";
+            _bufferTime = bufferTime ?? TimeSpan.FromSeconds(5);
         }
         #region Logging
         /// <summary>
@@ -62,8 +64,6 @@ namespace Juice.BgService.Extensions.Logging
 
             var newFile = Path.Combine(Directory.GetCurrentDirectory(), _directory, fileName ?? DateTimeOffset.Now.ToString("yyyy_MM_dd-HHmm")) + ".log";
 
-
-
             _filePath = newFile;
 
             ApplyRetainPolicy();
@@ -87,7 +87,14 @@ namespace Juice.BgService.Extensions.Logging
             {
                 if (!string.IsNullOrEmpty(state))
                 {
-                    File.Move(_filePath, Path.Combine(Path.GetDirectoryName(_filePath), Path.GetFileNameWithoutExtension(_filePath) + "_" + state + Path.GetExtension(_filePath)));
+                    var statedFile = Path.Combine(Path.GetDirectoryName(_filePath)!, Path.GetFileNameWithoutExtension(_filePath) + "_" + state + Path.GetExtension(_filePath));
+                    var ver = 0;
+                    while (File.Exists(statedFile))
+                    {
+                        statedFile = Path.Combine(Path.GetDirectoryName(_filePath)!, Path.GetFileNameWithoutExtension(_filePath) + "_" + state + " (" + (++ver) + ")" + Path.GetExtension(_filePath));
+                    }
+
+                    File.Move(_filePath, statedFile);
                 }
                 _filePath = _originFilePath;
                 _originFilePath = default;
@@ -150,6 +157,10 @@ namespace Juice.BgService.Extensions.Logging
             }
             await WriteLineAsync(sb.ToString());
             sb.Clear();
+            if (_forked)
+            {
+                RestoreOriginFile(state);
+            }
         }
 
         /// <summary>
@@ -219,7 +230,7 @@ namespace Juice.BgService.Extensions.Logging
                 await WriteFromQueueAsync();
                 try
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(5), _shutdown.Token);
+                    await Task.Delay(_bufferTime, _shutdown.Token);
                 }
                 catch (TaskCanceledException) { }
             }

@@ -26,16 +26,17 @@ namespace Juice.BgService.Tests
             var stopWatch = new Stopwatch();
             stopWatch.Start();
             _logger.LogInformation("Begin invoke");
+            var jobId = Guid.NewGuid();
             using (_logger.BeginScope(new List<KeyValuePair<string, object>>
             {
-                new KeyValuePair<string, object>("JobId", Guid.NewGuid()),
+                new KeyValuePair<string, object>("JobId", jobId),
                 new KeyValuePair<string, object>("JobDescription", "Invoke recurring task")
             }))
             {
                 _logger.LogInformation("Hello... next invoke {0} time is {1}. Instances count: {2}", Description, NextProcessing, globalCounter);
                 for (var i = 0; i < 10000; i++)
                 {
-                    if (_stopRequest.IsCancellationRequested) { break; }
+                    if (_stopRequest!.IsCancellationRequested) { break; }
                     _logger.LogInformation("Task {0}", i);
                 }
                 _logger.LogInformation("End");
@@ -43,7 +44,7 @@ namespace Juice.BgService.Tests
 
             using (_logger.BeginScope(new List<KeyValuePair<string, object>>
             {
-                new KeyValuePair<string, object>("JobId", Guid.NewGuid()),
+                new KeyValuePair<string, object>("JobId", jobId),
                 new KeyValuePair<string, object>("JobDescription", "Invoke recurring task"),
                 new KeyValuePair<string, object>("JobState", "Succeeded")
             }))
