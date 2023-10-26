@@ -26,9 +26,10 @@ namespace Juice.BgService.Tests
             var stopWatch = new Stopwatch();
             stopWatch.Start();
             _logger.LogInformation("Begin invoke");
+            var jobId = Guid.NewGuid().ToString();
             using (_logger.BeginScope(new List<KeyValuePair<string, object>>
             {
-                new KeyValuePair<string, object>("JobId", Guid.NewGuid()),
+                new KeyValuePair<string, object>("JobId", jobId),
                 new KeyValuePair<string, object>("JobDescription", "Invoke recurring task")
             }))
             {
@@ -43,7 +44,7 @@ namespace Juice.BgService.Tests
 
             using (_logger.BeginScope(new List<KeyValuePair<string, object>>
             {
-                new KeyValuePair<string, object>("JobId", Guid.NewGuid()),
+                new KeyValuePair<string, object>("JobId", jobId),
                 new KeyValuePair<string, object>("JobDescription", "Invoke recurring task"),
                 new KeyValuePair<string, object>("JobState", "Succeeded")
             }))

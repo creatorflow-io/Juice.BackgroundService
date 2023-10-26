@@ -44,7 +44,7 @@ namespace Juice.BgService.Extensions.Logging
                 var jobScope = log.Scopes.Last(s => s.Properties != null
                        && s.Properties.ContainsKey("JobId"));
 
-                var jobId = jobScope.Properties?["JobId"]?.ToString();
+                var jobId = jobScope.Properties!["JobId"]?.ToString();
                 var jobDescription = (jobScope.Properties?.ContainsKey("JobDescription") ?? false)
                     ? jobScope.Properties?["JobDescription"]?.ToString()
                     : default;
@@ -92,8 +92,8 @@ namespace Juice.BgService.Extensions.Logging
             {
                 var serviceDescription = scope?.Properties?["ServiceDescription"]?.ToString();
 
-                _fileLoggers.Add(serviceId, new FileLogger(Path.Combine(Options.Directory, serviceDescription ?? "Default"),
-                    Options.RetainPolicyFileCount, Options.MaxFileSize));
+                _fileLoggers.Add(serviceId, new FileLogger(Path.Combine(Options.Directory!, serviceDescription ?? "General"),
+                    Options.RetainPolicyFileCount, Options.MaxFileSize, Options.BufferTime));
                 _fileLoggers[serviceId].StartAsync().Wait();
             }
 
@@ -112,6 +112,10 @@ namespace Juice.BgService.Extensions.Logging
                 if (tasks.Any())
                 {
                     Task.WaitAll(tasks.ToArray());
+                }
+                foreach (var logger in _fileLoggers.Values)
+                {
+                    logger.Dispose();
                 }
             }
             base.Dispose(disposing);
