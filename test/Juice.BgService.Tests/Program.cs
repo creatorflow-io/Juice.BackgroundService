@@ -6,6 +6,7 @@ using Juice.BgService.Api;
 using Juice.BgService.Extensions.Logging;
 using Juice.BgService.FileWatcher;
 using Juice.BgService.Management;
+using Juice.BgService.Tests;
 using Juice.Extensions.Options;
 using Juice.Extensions.Swagger;
 using Microsoft.AspNetCore.Builder;
@@ -38,6 +39,14 @@ builder.Services.AddControllers();
 
 builder.Services.AddSwaggerWithDefaultConfigs()
     .ConfigureBgServiceSwaggerGen();
+
+builder.Services.AddSignalR()
+    .AddJsonProtocol(options =>
+    {
+        options.PayloadSerializerOptions.PropertyNamingPolicy = null;
+    });
+
+builder.Services.AddRazorPages();
 
 var pluginPaths = new string[]
 {
@@ -73,10 +82,9 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers();
-});
+app.MapControllers();
+app.MapRazorPages();
+app.MapHub<LogHub>("/loghub");
 
 app.UseBgServiceSwaggerUI();
 

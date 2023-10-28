@@ -13,6 +13,7 @@ namespace Juice.BgService.Tests.Recurring
             {
                 builder.AddConsole();
                 builder.AddBgServiceFileLogger(configuration.GetSection("Logging:File"));
+                builder.AddBgServiceSignalRLogger(configuration.GetSection("Logging:SignalR"));
                 builder.AddConfiguration(configuration.GetSection("Logging"));
             });
 

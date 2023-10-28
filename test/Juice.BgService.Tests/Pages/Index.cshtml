@@ -1,0 +1,37 @@
+﻿@page
+@model Juice.BgService.Tests.Pages.IndexModel
+@{
+}
+<script src="/lib/microsoft-signalr/signalr.min.js"></script>
+
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/loghub")
+        .configureLogging(signalR.LogLevel.Information)
+        .build();
+
+    async function start() {
+        try {
+            await connection.start();
+            console.log("SignalR Connected.");
+        } catch (err) {
+            console.log(err);
+            setTimeout(start, 5000);
+        }
+    };
+
+    connection.onclose(async () => {
+        await start();
+    });
+
+    connection.on("LoggingAsync", (serviceId, jobId, message, level, contextual, scopes) => {
+        console.log(`[${serviceId}] [${jobId}] [${level}] ${message} - ${contextual}`, scopes);
+    });
+
+    connection.on("StateAsync", (serviceId, jobId, state, message) => {
+        console.log(`[${serviceId}] [${jobId}] ${message} - ${state}`);
+    });
+
+    // Start the connection.
+    start();
+</script>
