@@ -87,14 +87,14 @@ namespace Juice.BgService.Extensions.Logging
             {
                 if (!string.IsNullOrEmpty(state))
                 {
-                    var statedFile = Path.Combine(Path.GetDirectoryName(_filePath)!, Path.GetFileNameWithoutExtension(_filePath) + "_" + state + Path.GetExtension(_filePath));
+                    var newFile = Path.Combine(Path.GetDirectoryName(_filePath)!, Path.GetFileNameWithoutExtension(_filePath) + "_" + state + Path.GetExtension(_filePath));
                     var ver = 0;
-                    while (File.Exists(statedFile))
+                    while (File.Exists(newFile))
                     {
-                        statedFile = Path.Combine(Path.GetDirectoryName(_filePath)!, Path.GetFileNameWithoutExtension(_filePath) + "_" + state + " (" + (++ver) + ")" + Path.GetExtension(_filePath));
+                        newFile = Path.Combine(Path.GetDirectoryName(_filePath)!, Path.GetFileNameWithoutExtension(_filePath) + "_" + state + " (" + (++ver) + ")" + Path.GetExtension(_filePath));
                     }
 
-                    File.Move(_filePath, statedFile);
+                    File.Move(_filePath, newFile);
                 }
                 _filePath = _originFilePath;
                 _originFilePath = default;
@@ -122,10 +122,11 @@ namespace Juice.BgService.Extensions.Logging
             }
         }
 
+        List<string> _scopes = new List<string>();
         /// <summary>
         /// Dequeue and write log entry to file
         /// </summary>
-        private async Task WriteFromQueueAsync()
+        private async Task WriteFromQueueAsync(bool stop = false)
         {
             var sb = new StringBuilder();
             string? state = default!;
@@ -153,13 +154,66 @@ namespace Juice.BgService.Extensions.Logging
                         state = log.State;
                     }
                 }
-                sb.AppendLine(log.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss.ff") + ": " + log.Message);
+
+                var scopes = log.GetScopes();
+                CompareAndBuildScope(sb, _scopes, scopes);
+                _scopes = scopes;
+
+                var time = log.Timestamp.ToLocalTime().ToString("HH:mm:ss.ff");
+                sb.AppendFormat("{0} {1}: {2}", time, log.LogLevel, log.Message);
+                sb.AppendLine();
+            }
+            if (stop)
+            {
+                CompareAndBuildScope(sb, _scopes, new List<string>());
             }
             await WriteLineAsync(sb.ToString());
             sb.Clear();
             if (_forked)
             {
                 RestoreOriginFile(state);
+            }
+        }
+
+        private void CompareAndBuildScope(StringBuilder sb, List<string> scopes, List<string> newScopes)
+        {
+            for (var i = 0; i < scopes.Count; i++)
+            {
+                if (i >= newScopes.Count)
+                {
+                    sb.AppendLine();
+                    for (var j = scopes.Count - 1; j >= i; j--)
+                    {
+                        sb.AppendFormat("{0}   End: {1}", new string('-', (j + 1) * 4), scopes[j]);
+                        sb.AppendLine();
+                    }
+                    break;
+                }
+                if (scopes[i] != newScopes[i])
+                {
+                    sb.AppendLine();
+                    for (var j = scopes.Count - 1; j >= i; j--)
+                    {
+                        sb.AppendFormat("{0}   End: {1}", new string('-', (j + 1) * 4), scopes[j]);
+                        sb.AppendLine();
+                    }
+                    for (var j = i; j < newScopes.Count; j++)
+                    {
+                        sb.AppendFormat("{0} Begin: {1}", new string('-', (j + 1) * 4), newScopes[j]);
+                        sb.AppendLine();
+                    }
+                    sb.AppendLine();
+                    return;
+                }
+            }
+            if (newScopes.Count > scopes.Count)
+            {
+                for (var j = scopes.Count; j < newScopes.Count; j++)
+                {
+                    sb.AppendFormat("{0} Begin: {1}", new string('-', (j + 1) * 4), newScopes[j]);
+                    sb.AppendLine();
+                }
+                sb.AppendLine();
             }
         }
 
@@ -237,7 +291,7 @@ namespace Juice.BgService.Extensions.Logging
 
             try
             {
-                await WriteFromQueueAsync();
+                await WriteFromQueueAsync(true);
             }
             catch (Exception) { }
         }

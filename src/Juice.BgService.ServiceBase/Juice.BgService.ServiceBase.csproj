@@ -5,6 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <Description>Service base to implement service plugins</Description>
+        <RootNamespace>Juice.BgService</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

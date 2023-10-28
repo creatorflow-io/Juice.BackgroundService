@@ -15,5 +15,15 @@ namespace Juice.BgService.Extensions.Logging
 
             return builder;
         }
+
+        public static ILoggingBuilder AddBgServiceFileLogger(this ILoggingBuilder builder, Action<FileLoggerOptions> configure)
+        {
+            builder.Services.Configure(configure);
+
+            builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ILoggerProvider, FileLoggerProvider>());
+
+            return builder;
+        }
+
     }
 }

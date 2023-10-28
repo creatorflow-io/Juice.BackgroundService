@@ -11,7 +11,7 @@ namespace Juice.BgService.Tests
     {
         public RecurringService(IServiceProvider serviceProvider) : base(serviceProvider.GetRequiredService<ILogger<RecurringService<TModel>>>())
         {
-            ScheduleOptions.OccursInterval(TimeSpan.FromSeconds(3));
+            ScheduleOptions.OccursInterval(TimeSpan.FromSeconds(30));
         }
 
         public void Configure(TModel model)
@@ -34,22 +34,35 @@ namespace Juice.BgService.Tests
             }))
             {
                 _logger.LogInformation("Hello... next invoke {0} time is {1}. Instances count: {2}", Description, NextProcessing, globalCounter);
-                for (var i = 0; i < 10000; i++)
+                for (var i = 0; i < 10; i++)
                 {
-                    if (_stopRequest.IsCancellationRequested) { break; }
-                    _logger.LogInformation("Task {0}", i);
+                    if (_stopRequest!.IsCancellationRequested) { break; }
+                    using (_logger.BeginScope($"Task {i}"))
+                    {
+                        for (var j = 0; j < 100; j++)
+                        {
+                            _logger.LogInformation("Processing {0}", j);
+                        }
+                        using (_logger.BeginScope(new List<KeyValuePair<string, object>>
+                        {
+                            new KeyValuePair<string, object>("Contextual", "success")
+                        }))
+                        {
+                            _logger.LogError("Task {0} failed", i);
+                        }
+                        using (_logger.BeginScope("Succeeded"))
+                        {
+                            _logger.LogInformation("Task {0} succeeded", i);
+                        }
+                    }
                 }
-                _logger.LogInformation("End");
-            }
-
-            using (_logger.BeginScope(new List<KeyValuePair<string, object>>
-            {
-                new KeyValuePair<string, object>("JobId", jobId),
-                new KeyValuePair<string, object>("JobDescription", "Invoke recurring task"),
-                new KeyValuePair<string, object>("JobState", "Succeeded")
-            }))
-            {
-                _logger.LogInformation("End");
+                using (_logger.BeginScope(new List<KeyValuePair<string, object>>
+                {
+                    new KeyValuePair<string, object>("JobState", "Succeeded")
+                }))
+                {
+                    _logger.LogInformation("End");
+                }
             }
 
             stopWatch.Stop();

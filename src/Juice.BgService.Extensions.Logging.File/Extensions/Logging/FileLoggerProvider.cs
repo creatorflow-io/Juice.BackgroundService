@@ -21,7 +21,7 @@ namespace Juice.BgService.Extensions.Logging
 
         public override void WriteLog<TState>(LogEntry<TState> entry, string formattedMessage)
         {
-            var log = new LogEntry(DateTimeOffset.Now, entry.Category, formattedMessage);
+            var log = new LogEntry(DateTimeOffset.Now, entry.Category, formattedMessage, entry.LogLevel);
 
             #region Collect log scopes
             ScopeProvider.ForEachScope((value, loggingProps) =>
@@ -66,7 +66,9 @@ namespace Juice.BgService.Extensions.Logging
                     log.ForkNewFile(fileName);
                 }
 
-                var jobState = (jobScope.Properties?.ContainsKey("JobState") ?? false) ? jobScope.Properties?["JobState"]?.ToString() : default;
+                var stateScope = log.Scopes.LastOrDefault(s => s.Properties != null
+                                   && s.Properties.ContainsKey("JobState"));
+                var jobState = stateScope?.Properties?["JobState"]?.ToString() ?? default;
                 log.SetState(jobState);
             }
             #endregion
@@ -74,7 +76,7 @@ namespace Juice.BgService.Extensions.Logging
             GetFileLogger(log).Write(log);
         }
 
-        private Dictionary<Guid, FileLogger> _fileLoggers = new Dictionary<Guid, FileLogger>();
+        private Dictionary<Guid, FileLogger> _loggers = new Dictionary<Guid, FileLogger>();
         private FileLogger GetFileLogger(LogEntry entry)
         {
             var scope = entry.Scopes?.LastOrDefault(s => s.Properties != null
@@ -88,16 +90,16 @@ namespace Juice.BgService.Extensions.Logging
                     : Guid.TryParse(serviceIdObj.ToString(), out var id) ? id : Guid.Empty)
                     : Guid.Empty;
 
-            if (!_fileLoggers.ContainsKey(serviceId))
+            if (!_loggers.ContainsKey(serviceId))
             {
                 var serviceDescription = scope?.Properties?["ServiceDescription"]?.ToString();
 
-                _fileLoggers.Add(serviceId, new FileLogger(Path.Combine(Options.Directory!, serviceDescription ?? "General"),
+                _loggers.Add(serviceId, new FileLogger(Path.Combine(Options.Directory!, serviceDescription ?? Options.GeneralName ?? "General"),
                     Options.RetainPolicyFileCount, Options.MaxFileSize, Options.BufferTime));
-                _fileLoggers[serviceId].StartAsync().Wait();
+                _loggers[serviceId].StartAsync().Wait();
             }
 
-            return _fileLoggers[serviceId];
+            return _loggers[serviceId];
         }
 
         protected override void Dispose(bool disposing)
@@ -105,7 +107,7 @@ namespace Juice.BgService.Extensions.Logging
             if (disposing)
             {
                 var tasks = new List<Task>();
-                foreach (var logger in _fileLoggers.Values)
+                foreach (var logger in _loggers.Values)
                 {
                     tasks.Add(logger.StopAsync(default));
                 }
@@ -113,7 +115,7 @@ namespace Juice.BgService.Extensions.Logging
                 {
                     Task.WaitAll(tasks.ToArray());
                 }
-                foreach (var logger in _fileLoggers.Values)
+                foreach (var logger in _loggers.Values)
                 {
                     logger.Dispose();
                 }

@@ -25,13 +25,19 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\src\Juice.BgService.Extensions.Logging.File\Juice.BgService.Extensions.Logging.File.csproj" >
+            <ExcludeAssets>runtime</ExcludeAssets>
+        </ProjectReference>
+        <ProjectReference Include="..\..\src\Juice.BgService.Extensions.Logging.SignalR\Juice.BgService.Extensions.Logging.SignalR.csproj" >
+            <ExcludeAssets>runtime</ExcludeAssets>
+        </ProjectReference>
         <ProjectReference Include="..\..\src\Juice.BgService.ServiceBase\Juice.BgService.ServiceBase.csproj">
             <ExcludeAssets>runtime</ExcludeAssets>
         </ProjectReference>
         <ProjectReference Include="..\..\src\Juice.BgService.Abstractions\Juice.BgService.Abstractions.csproj">
             <Private>false</Private>
         </ProjectReference>
-        <ProjectReference Include="..\Juice.BgService.Tests.Shared\Juice.BgService.Tests.Shared.csproj" >
+        <ProjectReference Include="..\Juice.BgService.Tests.Shared\Juice.BgService.Tests.Shared.csproj">
             <Private>false</Private>
         </ProjectReference>
     </ItemGroup>
