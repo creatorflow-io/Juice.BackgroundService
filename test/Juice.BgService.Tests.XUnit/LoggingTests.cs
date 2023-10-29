@@ -56,12 +56,12 @@ namespace Juice.BgService.Tests.XUnit
                 ["JobDescription"] = "xUnit",
             }))
             {
-                logger.LogInformation("Test {0}", "Start");
-                logger.LogInformation("Test {0}", "Procssing");
+                logger.LogInformation("Test {state}", "Start");
+                logger.LogInformation("Test {state}", "Procssing");
             }
 
             await Task.Delay(logTime);
-            var logFile = Path.Combine(logPath, "General", $"{guid} - xUnit.log");
+            var logFile = Path.Combine(logPath!, "General", $"{guid} - xUnit.log");
             _output.WriteLine(logFile);
             File.Exists(logFile).Should().BeTrue();
 
@@ -74,11 +74,11 @@ namespace Juice.BgService.Tests.XUnit
                 ["JobState"] = "Succeeded"
             }))
             {
-                logger.LogInformation("Test {0}", "End");
+                logger.LogInformation("Test {state}", "End");
             }
 
             await Task.Delay(logTime);
-            var logFile2 = Path.Combine(logPath, "General", $"{newid} - xUnit_Succeeded.log");
+            var logFile2 = Path.Combine(logPath!, "General", $"{newid} - xUnit_Succeeded.log");
             _output.WriteLine(logFile2);
             File.Exists(logFile2).Should().BeTrue();
             File.Exists(logFile).Should().BeTrue();
@@ -90,11 +90,11 @@ namespace Juice.BgService.Tests.XUnit
                 ["JobState"] = "Succeeded"
             }))
             {
-                logger.LogInformation("Test {0}", "End");
+                logger.LogInformation("Test {state}", "End");
             }
 
             await Task.Delay(logTime);
-            var logFile3 = Path.Combine(logPath, "General", $"{guid} - xUnit_Succeeded.log");
+            var logFile3 = Path.Combine(logPath!, "General", $"{guid} - xUnit_Succeeded.log");
             _output.WriteLine(logFile3);
             File.Exists(logFile3).Should().BeTrue();
             File.Exists(logFile).Should().BeFalse();
@@ -106,12 +106,12 @@ namespace Juice.BgService.Tests.XUnit
                 ["JobState"] = "Succeeded"
             }))
             {
-                logger.LogInformation("Test {0}", "Rerun");
-                logger.LogInformation("Test {0}", "End");
+                logger.LogInformation("Test {state}", "Rerun");
+                logger.LogInformation("Test {state}", "End");
             }
 
             await Task.Delay(logTime);
-            var logFile4 = Path.Combine(logPath, "General", $"{guid} - xUnit_Succeeded (1).log");
+            var logFile4 = Path.Combine(logPath!, "General", $"{guid} - xUnit_Succeeded (1).log");
             _output.WriteLine(logFile4);
             File.Exists(logFile4).Should().BeTrue();
             File.Exists(logFile3).Should().BeTrue();
@@ -156,24 +156,24 @@ namespace Juice.BgService.Tests.XUnit
                 ["JobDescription"] = "xUnit",
             }))
             {
-                logger.LogInformation("Test {0}", "Start");
-                logger.LogInformation("Test {0}", "Procssing");
+                logger.LogInformation("Test {state}", "Start");
+                logger.LogInformation("Test {state}", "Procssing");
 
                 using (logger.BeginScope(new Dictionary<string, object>
                 {
                     ["JobState"] = "Succeeded"
                 }))
                 {
-                    logger.LogInformation("Test {0}", "End");
+                    logger.LogInformation("Test {state}", "End");
                 }
             }
 
             await Task.Delay(logTime);
-            var logFile = Path.Combine(logPath, "General", $"{guid} - xUnit.log");
+            var logFile = Path.Combine(logPath!, "General", $"{guid} - xUnit.log");
             _output.WriteLine(logFile);
             File.Exists(logFile).Should().BeFalse();
 
-            var logFile2 = Path.Combine(logPath, "General", $"{guid} - xUnit_Succeeded.log");
+            var logFile2 = Path.Combine(logPath!, "General", $"{guid} - xUnit_Succeeded.log");
             _output.WriteLine(logFile2);
             File.Exists(logFile2).Should().BeTrue();
 
@@ -212,20 +212,20 @@ namespace Juice.BgService.Tests.XUnit
 
             using (logger.BeginScope("Scope 1"))
             {
-                logger.LogInformation("Test {0}", "Start");
-                logger.LogInformation("Test {0}", "Procssing");
+                logger.LogInformation("Test {state}", "Start");
+                logger.LogInformation("Test {state}", "Procssing");
 
                 using (logger.BeginScope("Scope 1.1"))
                 {
-                    logger.LogInformation("Test {0}", "Child log");
+                    logger.LogInformation("Test {state}", "Child log");
                 }
 
                 using (logger.BeginScope("Scope 1.2"))
                 {
-                    logger.LogInformation("Test {0}", "Child log");
+                    logger.LogInformation("Test {state}", "Child log");
                     using (logger.BeginScope("Scope 1.2.1"))
                     {
-                        logger.LogInformation("Test {0}", "Child log");
+                        logger.LogInformation("Test {state}", "Child log");
                     }
                 }
 
@@ -233,12 +233,12 @@ namespace Juice.BgService.Tests.XUnit
                 {
                     using (logger.BeginScope("Scope 1.3.1"))
                     {
-                        logger.LogInformation("Test {0}", "Child log");
+                        logger.LogInformation("Test {state}", "Child log");
                     }
                 }
             }
 
-            logger.LogInformation("Test {0}", "End");
+            logger.LogInformation("Test {state}", "End");
 
         }
     }

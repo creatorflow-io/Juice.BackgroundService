@@ -24,7 +24,7 @@ namespace Juice.BgService.Scheduled
         {
             var lastLog = DateTimeOffset.Now;
             _nextProcessing = ScheduleOptions.Frequencies.NextOccursAt(null, true);
-            _waitCancel = CancellationTokenSource.CreateLinkedTokenSource(_stopRequest.Token);
+            _waitCancel = CancellationTokenSource.CreateLinkedTokenSource(_stopRequest!.Token);
 
             while (!_stopRequest.IsCancellationRequested)
             {

@@ -76,8 +76,16 @@ namespace Juice.BgService.Extensions.Logging
 
             if (!_loggers.ContainsKey(serviceId))
             {
-                _loggers.Add(serviceId, new SignalRLogger(serviceId.ToString(), Options));
-                _loggers[serviceId].StartAsync().Wait();
+                try
+                {
+                    _loggers.Add(serviceId, new SignalRLogger(serviceId.ToString(), Options));
+                    _loggers[serviceId].StartAsync().Wait();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error while initializing SignalRLogger: {ex.Message}");
+                    throw new Exception($"Error while initializing SignalRLogger: {ex.Message}", ex);
+                }
             }
 
             return _loggers[serviceId];

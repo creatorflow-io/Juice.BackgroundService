@@ -6,7 +6,7 @@
         public string? JoinGroupMethod { get; set; }
         public string? LogMethod { get; set; }
         public string? StateMethod { get; set; }
-        public bool ScopesSupported { get; set; } = true;
+        public bool IncludeScopes { get; set; } = true;
         public bool Disabled { get; set; }
     }
 }
