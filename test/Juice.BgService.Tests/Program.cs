@@ -24,6 +24,7 @@ WebApplicationOptions options = new()
 var builder = WebApplication.CreateBuilder(options);
 
 builder.Logging.AddBgServiceFileLogger(builder.Configuration.GetSection("Logging:File"));
+builder.Logging.AddBgServiceSignalRLogger(builder.Configuration.GetSection("Logging:SignalR"));
 
 // Add services to the container.
 
