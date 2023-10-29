@@ -176,6 +176,12 @@ namespace Juice.BgService.Extensions.Logging
         /// <returns></returns>
         protected async Task ExecuteAsync()
         {
+            try
+            {
+                await Task.Delay(TimeSpan.FromSeconds(10), _shutdown.Token);
+            }
+            catch (TaskCanceledException) { }
+
             while (!_shutdown!.IsCancellationRequested)
             {
                 try
@@ -196,14 +202,8 @@ namespace Juice.BgService.Extensions.Logging
                             _logger.LogError(ex, "SignalRLogger: {message}", ex.Message);
                         }
                     }
-                    if (_connection.State == HubConnectionState.Connected)
-                    {
-                        await Task.Delay(TimeSpan.FromSeconds(60), _shutdown.Token);
-                    }
-                    else
-                    {
-                        await Task.Delay(TimeSpan.FromSeconds(30), _shutdown.Token);
-                    }
+                    await Task.Delay(TimeSpan.FromSeconds(60), _shutdown.Token);
+
                 }
                 catch (TaskCanceledException) { }
             }
