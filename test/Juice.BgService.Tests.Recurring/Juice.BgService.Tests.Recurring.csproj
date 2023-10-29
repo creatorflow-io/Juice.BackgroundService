@@ -9,10 +9,16 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <None Remove="appsettings.Development.json" />
         <None Remove="appsettings.json" />
     </ItemGroup>
 
     <ItemGroup>
+        <Content Include="appsettings.Development.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+          <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+          <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        </Content>
         <Content Include="appsettings.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
@@ -25,10 +31,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Juice.BgService.Extensions.Logging.File\Juice.BgService.Extensions.Logging.File.csproj" >
+        <ProjectReference Include="..\..\src\Juice.BgService.Extensions.Logging.File\Juice.BgService.Extensions.Logging.File.csproj">
             <ExcludeAssets>runtime</ExcludeAssets>
         </ProjectReference>
-        <ProjectReference Include="..\..\src\Juice.BgService.Extensions.Logging.SignalR\Juice.BgService.Extensions.Logging.SignalR.csproj" >
+        <ProjectReference Include="..\..\src\Juice.BgService.Extensions.Logging.SignalR\Juice.BgService.Extensions.Logging.SignalR.csproj">
             <ExcludeAssets>runtime</ExcludeAssets>
         </ProjectReference>
         <ProjectReference Include="..\..\src\Juice.BgService.ServiceBase\Juice.BgService.ServiceBase.csproj">

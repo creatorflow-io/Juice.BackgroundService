@@ -16,7 +16,7 @@ namespace Juice.BgService.Tests
 
         public void Configure(CustomServiceModel model)
         {
-            _logger.LogInformation("Configure {0}", JsonConvert.SerializeObject(model));
+            _logger.LogInformation("Configure {model}", JsonConvert.SerializeObject(model));
         }
         public override Task<(bool Healthy, string Message)> HealthCheckAsync() =>
             Task.FromResult((true, ""));
@@ -33,11 +33,11 @@ namespace Juice.BgService.Tests
                 new KeyValuePair<string, object>("JobDescription", "Invoke recurring task")
             }))
             {
-                _logger.LogInformation("Hello... next invoke {0} time is {1}. Instances count: {2}", Description, NextProcessing, globalCounter);
+                _logger.LogInformation("Hello... next invoke {description} time is {time}. Instances count: {count}", Description, NextProcessing, globalCounter);
                 for (var i = 0; i < 10000; i++)
                 {
                     if (_stopRequest!.IsCancellationRequested) { break; }
-                    _logger.LogInformation("Task {0}", i);
+                    _logger.LogInformation("Task {i}", i);
                 }
                 _logger.LogInformation("End");
             }

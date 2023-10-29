@@ -16,8 +16,8 @@ namespace Juice.BgService.Extensions.Logging
             _options = options;
             if (!options.Disabled)
             {
-                if (options.HubUrl == null) { throw new ArgumentNullException(nameof(options)); }
-                if (options.Directory == null) { throw new ArgumentNullException(nameof(options)); }
+                if (string.IsNullOrEmpty(options.HubUrl)) { throw new ArgumentException("SignalR:HubUrl is null or empty"); }
+                if (options.Directory == null) { throw new ArgumentException("SignalR:Directory is null"); }
 
                 _logger = BuildLogger();
             }
@@ -74,7 +74,7 @@ namespace Juice.BgService.Extensions.Logging
             try
             {
                 var method = _options.LogMethod ?? "LoggingAsync";
-                if (_options.ScopesSupported)
+                if (_options.IncludeScopes)
                 {
                     await _connection.SendAsync(method, serviceId, jobId, message, level, contextual, scopes);
                 }
@@ -124,15 +124,20 @@ namespace Juice.BgService.Extensions.Logging
             {
                 return;
             }
-            _logger.LogInformation("SignalRLogger: {0}", "Starting");
+            _logger.LogInformation("SignalRLogger: {state}", "Starting");
 
             _connection = BuildConnection();
-
-            await _connection.StartAsync(cancellationToken);
-
-            if (!string.IsNullOrEmpty(_options.JoinGroupMethod))
+            try
             {
-                await _connection.InvokeAsync(_options.JoinGroupMethod, _channel, cancellationToken);
+                await _connection.StartAsync(cancellationToken);
+                if (!string.IsNullOrEmpty(_options.JoinGroupMethod))
+                {
+                    await _connection.InvokeAsync(_options.JoinGroupMethod, _channel, cancellationToken);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "SignalRLogger: {message}", ex.Message);
             }
 
             // Create a linked token so we can trigger cancellation outside of this token's cancellation
@@ -177,10 +182,28 @@ namespace Juice.BgService.Extensions.Logging
                 {
                     if (_connection!.State == HubConnectionState.Disconnected)
                     {
-                        await _connection.StartAsync(_shutdown.Token);
-                    }
+                        try
+                        {
+                            await _connection.StartAsync(_shutdown.Token);
 
-                    await Task.Delay(TimeSpan.FromMinutes(1), _shutdown.Token);
+                            if (!string.IsNullOrEmpty(_options.JoinGroupMethod))
+                            {
+                                await _connection.InvokeAsync(_options.JoinGroupMethod, _channel, _shutdown.Token);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, "SignalRLogger: {message}", ex.Message);
+                        }
+                    }
+                    if (_connection.State == HubConnectionState.Connected)
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(60), _shutdown.Token);
+                    }
+                    else
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(30), _shutdown.Token);
+                    }
                 }
                 catch (TaskCanceledException) { }
             }
