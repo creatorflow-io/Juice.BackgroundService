@@ -179,9 +179,9 @@ namespace Juice.BgService.Tests.XUnit
 
         }
 
-        [IgnoreOnCIFact(DisplayName = "Log will multiple scopes"), TestPriority(999)]
+        [IgnoreOnCIFact(DisplayName = "Log should multiple scopes"), TestPriority(999)]
 
-        public async Task LogFile_should_multple_scopesAsync()
+        public async Task LogFile_should_multiple_scopesAsync()
         {
             var resolver = new DependencyResolver
             {
@@ -229,17 +229,15 @@ namespace Juice.BgService.Tests.XUnit
                     }
                 }
 
-                using (logger.BeginScope("Scope 1.3"))
+                using (logger.BeginScope(new string[] { "Scope 1.3", "Scope 1.3.1" }))
                 {
-                    using (logger.BeginScope("Scope 1.3.1"))
-                    {
-                        logger.LogInformation("Test {state}", "Child log");
-                    }
+                    logger.LogInformation("Test {state}", "Child log");
                 }
             }
 
             logger.LogInformation("Test {state}", "End");
 
         }
+
     }
 }
