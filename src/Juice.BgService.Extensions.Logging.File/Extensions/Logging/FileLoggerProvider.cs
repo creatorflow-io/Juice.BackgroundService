@@ -30,6 +30,13 @@ namespace Juice.BgService.Extensions.Logging
                 {
                     log.PushScope(new LogScope { Scope = value.ToString() });
                 }
+                else if (value is IEnumerable<string> scopes)
+                {
+                    foreach (var scope in scopes)
+                    {
+                        log.PushScope(new LogScope { Scope = scope });
+                    }
+                }
                 else if (value is IEnumerable<KeyValuePair<string, object>> props)
                 {
                     log.PushScope(new LogScope { Properties = props.ToDictionary(kvp => kvp.Key, kvp => kvp.Value) });

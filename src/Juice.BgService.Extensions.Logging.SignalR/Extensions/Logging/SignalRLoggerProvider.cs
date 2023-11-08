@@ -50,6 +50,10 @@ namespace Juice.BgService.Extensions.Logging
                 {
                     scopes.Add(s);
                 }
+                else if (value is IEnumerable<string> eScopes)
+                {
+                    scopes.AddRange(eScopes);
+                }
             }, entry.State);
 
             #endregion
