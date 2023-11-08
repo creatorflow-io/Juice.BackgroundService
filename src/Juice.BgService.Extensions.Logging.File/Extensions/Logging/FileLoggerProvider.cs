@@ -19,12 +19,12 @@ namespace Juice.BgService.Extensions.Logging
         }
 
 
-        public override void WriteLog<TState>(LogEntry<TState> entry, string formattedMessage)
+        public override void WriteLog<TState>(LogEntry<TState> entry, string formattedMessage, IExternalScopeProvider? scopeProvider)
         {
             var log = new LogEntry(DateTimeOffset.Now, entry.Category, formattedMessage, entry.LogLevel);
 
             #region Collect log scopes
-            ScopeProvider.ForEachScope((value, loggingProps) =>
+            scopeProvider?.ForEachScope((value, loggingProps) =>
             {
                 if (value is string)
                 {
