@@ -16,7 +16,7 @@ namespace Juice.BgService.Extensions.Logging
             _optionsMonitor = optionsMonitor;
         }
 
-        public override void WriteLog<TState>(LogEntry<TState> entry, string formattedMessage)
+        public override void WriteLog<TState>(LogEntry<TState> entry, string formattedMessage, IExternalScopeProvider? scopeProvider)
         {
             Guid? serviceId = default;
             string? jobId = default;
@@ -25,7 +25,7 @@ namespace Juice.BgService.Extensions.Logging
             List<string> scopes = new List<string>();
 
             #region Collect log scopes
-            ScopeProvider.ForEachScope((value, loggingProps) =>
+            scopeProvider?.ForEachScope((value, loggingProps) =>
             {
                 if (value is IEnumerable<KeyValuePair<string, object>> props)
                 {
