@@ -102,7 +102,7 @@ namespace Juice.BgService.Extensions.Logging
                 var serviceDescription = scope?.Properties?["ServiceDescription"]?.ToString();
 
                 _loggers.Add(serviceId, new FileLogger(Path.Combine(Options.Directory!, serviceDescription ?? Options.GeneralName ?? "General"),
-                    Options.RetainPolicyFileCount, Options.MaxFileSize, Options.BufferTime));
+                    Options));
                 _loggers[serviceId].StartAsync().Wait();
             }
 
