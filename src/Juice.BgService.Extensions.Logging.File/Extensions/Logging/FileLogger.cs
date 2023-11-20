@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Text;
+using Microsoft.Extensions.Logging;
 
 namespace Juice.BgService.Extensions.Logging
 {
@@ -13,20 +14,25 @@ namespace Juice.BgService.Extensions.Logging
         private int _retainPolicyFileCount = 50;
         private int _maxFileSize = 5 * 1024 * 1024;
         private int _counter = 0;
-        private TimeSpan _bufferTime;
+        private TimeSpan _bufferTime = TimeSpan.FromSeconds(5);
+        private bool _includeScopes = false;
 
-        public FileLogger(string? directory, int? retainPolicyFileCount, int? maxFileSize, TimeSpan? bufferTime)
+        public FileLogger(string? directory, FileLoggerOptions options)
         {
-            if (retainPolicyFileCount.HasValue)
+            if (options.RetainPolicyFileCount > 0)
             {
-                _retainPolicyFileCount = retainPolicyFileCount.Value;
+                _retainPolicyFileCount = options.RetainPolicyFileCount;
             }
-            if (maxFileSize.HasValue)
+            if (options.MaxFileSize > 0)
             {
-                _maxFileSize = maxFileSize.Value;
+                _maxFileSize = options.MaxFileSize;
             }
             _directory = directory ?? "";
-            _bufferTime = bufferTime ?? TimeSpan.FromSeconds(5);
+            if (options.BufferTime.TotalMilliseconds > 0)
+            {
+                _bufferTime = options.BufferTime;
+            }
+            _includeScopes = options.IncludeScopes;
         }
         #region Logging
         /// <summary>
@@ -160,8 +166,10 @@ namespace Juice.BgService.Extensions.Logging
                 _scopes = scopes;
 
                 var time = log.Timestamp.ToLocalTime().ToString("HH:mm:ss.ff");
-                sb.AppendFormat("{0} {1}: {2}", time, log.LogLevel, log.Message);
+                var category = log.Category;
+                sb.AppendFormat("{0} {1}: {2}", time, GetLevelShortName(log.LogLevel), category);
                 sb.AppendLine();
+                sb.AppendLine(log.Message);
             }
             if (stop)
             {
@@ -175,45 +183,62 @@ namespace Juice.BgService.Extensions.Logging
             }
         }
 
+        private static string GetLevelShortName(LogLevel level)
+        {
+            return level switch
+            {
+                LogLevel.Trace => "TRC",
+                LogLevel.Debug => "DBG",
+                LogLevel.Information => "INF",
+                LogLevel.Warning => "WRN",
+                LogLevel.Error => "ERR",
+                LogLevel.Critical => "CRI",
+                _ => "NON",
+            };
+        }
+
         private void CompareAndBuildScope(StringBuilder sb, List<string> scopes, List<string> newScopes)
         {
-            for (var i = 0; i < scopes.Count; i++)
+            if (_includeScopes)
             {
-                if (i >= newScopes.Count)
+                for (var i = 0; i < scopes.Count; i++)
                 {
-                    sb.AppendLine();
-                    for (var j = scopes.Count - 1; j >= i; j--)
+                    if (i >= newScopes.Count)
                     {
-                        sb.AppendFormat("{0}   End: {1}", new string('-', (j + 1) * 4), scopes[j]);
                         sb.AppendLine();
+                        for (var j = scopes.Count - 1; j >= i; j--)
+                        {
+                            sb.AppendFormat("{0}   End: {1}", new string('-', (j + 1) * 4), scopes[j]);
+                            sb.AppendLine();
+                        }
+                        break;
                     }
-                    break;
+                    if (scopes[i] != newScopes[i])
+                    {
+                        sb.AppendLine();
+                        for (var j = scopes.Count - 1; j >= i; j--)
+                        {
+                            sb.AppendFormat("{0}   End: {1}", new string('-', (j + 1) * 4), scopes[j]);
+                            sb.AppendLine();
+                        }
+                        for (var j = i; j < newScopes.Count; j++)
+                        {
+                            sb.AppendFormat("{0} Begin: {1}", new string('-', (j + 1) * 4), newScopes[j]);
+                            sb.AppendLine();
+                        }
+                        sb.AppendLine();
+                        return;
+                    }
                 }
-                if (scopes[i] != newScopes[i])
+                if (newScopes.Count > scopes.Count)
                 {
-                    sb.AppendLine();
-                    for (var j = scopes.Count - 1; j >= i; j--)
-                    {
-                        sb.AppendFormat("{0}   End: {1}", new string('-', (j + 1) * 4), scopes[j]);
-                        sb.AppendLine();
-                    }
-                    for (var j = i; j < newScopes.Count; j++)
+                    for (var j = scopes.Count; j < newScopes.Count; j++)
                     {
                         sb.AppendFormat("{0} Begin: {1}", new string('-', (j + 1) * 4), newScopes[j]);
                         sb.AppendLine();
                     }
                     sb.AppendLine();
-                    return;
                 }
-            }
-            if (newScopes.Count > scopes.Count)
-            {
-                for (var j = scopes.Count; j < newScopes.Count; j++)
-                {
-                    sb.AppendFormat("{0} Begin: {1}", new string('-', (j + 1) * 4), newScopes[j]);
-                    sb.AppendLine();
-                }
-                sb.AppendLine();
             }
         }
 
