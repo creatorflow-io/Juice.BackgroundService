@@ -162,18 +162,25 @@ namespace Juice.BgService.Extensions.Logging
                 }
 
                 var scopes = log.GetScopes();
-                CompareAndBuildScope(sb, _scopes, scopes);
+                CompareAndBuildScope(sb, _scopes, scopes, log.Category);
                 _scopes = scopes;
 
                 var time = log.Timestamp.ToLocalTime().ToString("HH:mm:ss.ff");
-                var category = log.Category;
-                sb.AppendFormat("{0} {1}: {2}", time, GetLevelShortName(log.LogLevel), category);
-                sb.AppendLine();
-                sb.AppendLine(log.Message);
+                if (scopes.Any() && _includeScopes)
+                {
+                    sb.AppendFormat("{0} {1}: {2}", time, GetLevelShortName(log.LogLevel), log.Message);
+                    sb.AppendLine();
+                }
+                else
+                {
+                    sb.AppendFormat("{0} {1}: {2}", time, GetLevelShortName(log.LogLevel), log.Category);
+                    sb.AppendLine();
+                    sb.AppendLine(log.Message);
+                }
             }
             if (stop)
             {
-                CompareAndBuildScope(sb, _scopes, new List<string>());
+                CompareAndBuildScope(sb, _scopes, new List<string>(), default);
             }
             await WriteLineAsync(sb.ToString());
             sb.Clear();
@@ -197,7 +204,7 @@ namespace Juice.BgService.Extensions.Logging
             };
         }
 
-        private void CompareAndBuildScope(StringBuilder sb, List<string> scopes, List<string> newScopes)
+        private void CompareAndBuildScope(StringBuilder sb, List<string> scopes, List<string> newScopes, string? caterogy)
         {
             if (_includeScopes)
             {
@@ -225,6 +232,10 @@ namespace Juice.BgService.Extensions.Logging
                         {
                             sb.AppendFormat("{0} Begin: {1}", new string('-', (j + 1) * 4), newScopes[j]);
                             sb.AppendLine();
+                            if (caterogy != null)
+                            {
+                                sb.AppendLine(caterogy);
+                            }
                         }
                         sb.AppendLine();
                         return;
@@ -236,6 +247,10 @@ namespace Juice.BgService.Extensions.Logging
                     {
                         sb.AppendFormat("{0} Begin: {1}", new string('-', (j + 1) * 4), newScopes[j]);
                         sb.AppendLine();
+                        if (caterogy != null)
+                        {
+                            sb.AppendLine(caterogy);
+                        }
                     }
                     sb.AppendLine();
                 }
