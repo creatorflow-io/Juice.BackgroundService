@@ -3,10 +3,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Juice.BgService.Api;
-using Juice.BgService.Extensions.Logging;
 using Juice.BgService.FileWatcher;
 using Juice.BgService.Management;
 using Juice.BgService.Tests;
+using Juice.Extensions.Logging;
 using Juice.Extensions.Options;
 using Juice.Extensions.Swagger;
 using Microsoft.AspNetCore.Builder;
@@ -23,8 +23,8 @@ WebApplicationOptions options = new()
 
 var builder = WebApplication.CreateBuilder(options);
 
-builder.Logging.AddBgServiceFileLogger(builder.Configuration.GetSection("Logging:File"));
-builder.Logging.AddBgServiceSignalRLogger(builder.Configuration.GetSection("Logging:SignalR"));
+builder.Logging.AddFileLogger(builder.Configuration.GetSection("Logging:File"));
+builder.Logging.AddSignalRLogger(builder.Configuration.GetSection("Logging:SignalR"));
 
 // Add services to the container.
 

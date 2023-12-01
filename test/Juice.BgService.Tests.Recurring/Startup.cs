@@ -1,4 +1,4 @@
-﻿using Juice.BgService.Extensions.Logging;
+﻿using Juice.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -12,8 +12,8 @@ namespace Juice.BgService.Tests.Recurring
             services.AddLogging(builder =>
             {
                 builder.AddConsole();
-                builder.AddBgServiceFileLogger(configuration.GetSection("Logging:File"));
-                builder.AddBgServiceSignalRLogger(configuration.GetSection("Logging:SignalR"));
+                builder.AddFileLogger(configuration.GetSection("Logging:File"));
+                builder.AddSignalRLogger(configuration.GetSection("Logging:SignalR"));
                 builder.AddConfiguration(configuration.GetSection("Logging"));
             });
 
