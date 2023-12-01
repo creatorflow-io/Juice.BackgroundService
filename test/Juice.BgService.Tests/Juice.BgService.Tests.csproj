@@ -17,8 +17,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Juice.BgService.Api\Juice.BgService.Api.csproj" />
-    <ProjectReference Include="..\..\src\Juice.BgService.Extensions.Logging.File\Juice.BgService.Extensions.Logging.File.csproj" />
-    <ProjectReference Include="..\..\src\Juice.BgService.Extensions.Logging.SignalR\Juice.BgService.Extensions.Logging.SignalR.csproj" />
     <ProjectReference Include="..\..\src\Juice.BgService.ServiceBase\Juice.BgService.ServiceBase.csproj" />
     <ProjectReference Include="..\..\src\Juice.BgService\Juice.BgService.csproj" />
     <ProjectReference Include="..\Juice.BgService.Tests.Shared\Juice.BgService.Tests.Shared.csproj" />
@@ -27,6 +25,9 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="$(MicrosoftExtensionsVersion)" />
         <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="$(SignalRVersion)" />
+
+        <PackageReference Include="Juice.Extensions.Logging.File" Version="$(JuiceRefVersion)" />
+        <PackageReference Include="Juice.Extensions.Logging.SignalR" Version="$(JuiceRefVersion)" />
     </ItemGroup>
 
     <ItemGroup>
