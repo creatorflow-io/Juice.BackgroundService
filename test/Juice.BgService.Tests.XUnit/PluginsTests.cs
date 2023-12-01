@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using Juice.BgService.Extensions.Logging;
 using Juice.BgService.Management;
 using Juice.Extensions.DependencyInjection;
 using Juice.Plugins.Loader;
@@ -154,12 +153,6 @@ namespace Juice.BgService.Tests.XUnit
 
             var aplugin = plugins.First();
             var pConfiguration = aplugin.ServiceProvider?.GetRequiredService<IPluginConfiguration>();
-            if (pConfiguration is PluginConfiguration pc)
-            {
-                _output.WriteLine(pc.CurrentDirectory);
-                var configuration = pc.GetConfiguration(GetType().Assembly);
-                var options = configuration.GetSection("Logging:File").Get<FileLoggerOptions>();
-            }
 
             _output.WriteLine(typeof(ServiceManager<ServiceModel>).Name);
 

@@ -31,12 +31,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Juice.BgService.Extensions.Logging.File\Juice.BgService.Extensions.Logging.File.csproj">
-            <ExcludeAssets>runtime</ExcludeAssets>
-        </ProjectReference>
-        <ProjectReference Include="..\..\src\Juice.BgService.Extensions.Logging.SignalR\Juice.BgService.Extensions.Logging.SignalR.csproj">
-            <ExcludeAssets>runtime</ExcludeAssets>
-        </ProjectReference>
         <ProjectReference Include="..\..\src\Juice.BgService.ServiceBase\Juice.BgService.ServiceBase.csproj">
             <ExcludeAssets>runtime</ExcludeAssets>
         </ProjectReference>
@@ -48,7 +42,14 @@
         </ProjectReference>
     </ItemGroup>
 
-    <!--<ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="$(MicrosoftExtensionsVersion)" />
-  </ItemGroup>-->
+    <ItemGroup>
+        <PackageReference Include="Juice.Extensions.Logging.File" Version="$(JuiceRefVersion)" >
+            <Private>false</Private>
+            <ExcludeAssets>runtime</ExcludeAssets>
+        </PackageReference>
+        <PackageReference Include="Juice.Extensions.Logging.SignalR" Version="$(JuiceRefVersion)">
+            <Private>false</Private>
+            <ExcludeAssets>runtime</ExcludeAssets>
+        </PackageReference>
+  </ItemGroup>
 </Project>
