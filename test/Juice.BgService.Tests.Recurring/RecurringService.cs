@@ -29,11 +29,10 @@ namespace Juice.BgService.Tests
             var jobId = Guid.NewGuid().ToString();
             using (_logger.BeginScope(new List<KeyValuePair<string, object>>
             {
-                new KeyValuePair<string, object>("JobId", jobId),
-                new KeyValuePair<string, object>("JobDescription", "Invoke recurring task")
+                new KeyValuePair<string, object>("TraceId", jobId),
+                new KeyValuePair<string, object>("Operation", "Invoke recurring task")
             }))
             {
-                _logger.LogInformation("Hello... next invoke {0} time is {1}. Instances count: {2}", Description, NextProcessing, globalCounter);
                 for (var i = 0; i < 10; i++)
                 {
                     if (_stopRequest!.IsCancellationRequested) { break; }
@@ -58,15 +57,18 @@ namespace Juice.BgService.Tests
                 }
                 using (_logger.BeginScope(new List<KeyValuePair<string, object>>
                 {
-                    new KeyValuePair<string, object>("JobState", "Succeeded")
+                    new KeyValuePair<string, object>("OperationState", "Succeeded")
                 }))
                 {
                     _logger.LogInformation("End");
                 }
+
             }
 
             stopWatch.Stop();
             _logger.LogInformation("Invoked take {time}", stopWatch.Elapsed);
+            _logger.LogInformation("Hello... next invoke {0} time is {1}. Instances count: {2}", Description, NextProcessing, globalCounter);
+
             return (true, default);
         }
 
