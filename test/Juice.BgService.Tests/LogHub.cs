@@ -7,7 +7,7 @@ namespace Juice.BgService.Tests
 {
     public class LogHub : Hub
     {
-        public async Task LoggingAsync(Guid serviceId, string? traceId, string category, string message, LogLevel level, string? contextual, string[] scopes)
+        public async Task LoggingAsync(Guid serviceId, string? traceId, string category, string message, LogLevel level, string? contextual, object[] scopes)
         {
             try
             {
