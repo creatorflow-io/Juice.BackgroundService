@@ -28,6 +28,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Juice.BgService.Tests.Shared", "test\Juice.BgService.Tests.Shared\Juice.BgService.Tests.Shared.csproj", "{60711711-52AB-4FBA-8415-BD5F9D4C2E26}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Juice.BgService.Tests.ReferencedService", "test\Juice.BgService.Tests.ReferencedService\Juice.BgService.Tests.ReferencedService.csproj", "{97BD8708-CDA2-47B4-9BBB-F18489465BDD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,6 +68,10 @@ Global
 		{60711711-52AB-4FBA-8415-BD5F9D4C2E26}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60711711-52AB-4FBA-8415-BD5F9D4C2E26}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60711711-52AB-4FBA-8415-BD5F9D4C2E26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97BD8708-CDA2-47B4-9BBB-F18489465BDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97BD8708-CDA2-47B4-9BBB-F18489465BDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97BD8708-CDA2-47B4-9BBB-F18489465BDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97BD8708-CDA2-47B4-9BBB-F18489465BDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -79,6 +85,7 @@ Global
 		{1CD43B61-AB4E-48C5-A724-889DD5401A48} = {6931CF9C-705C-477D-BDAD-D87CFEDD0BF2}
 		{05E4B4A1-1A03-472D-A898-33DC6B49FB5F} = {602474EE-1C88-469E-832E-AE06B00D2288}
 		{60711711-52AB-4FBA-8415-BD5F9D4C2E26} = {6931CF9C-705C-477D-BDAD-D87CFEDD0BF2}
+		{97BD8708-CDA2-47B4-9BBB-F18489465BDD} = {6931CF9C-705C-477D-BDAD-D87CFEDD0BF2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {46DC06F6-883A-4568-B0BA-0C90702C5583}
