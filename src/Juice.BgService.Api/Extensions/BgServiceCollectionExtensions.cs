@@ -8,7 +8,7 @@ namespace Juice.BgService.Api
     {
         /// <summary>
         /// Configure SwaggerGen for Background Service
-        /// <para>bgservice-v1</para>
+        /// <para>bgservice</para>
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
