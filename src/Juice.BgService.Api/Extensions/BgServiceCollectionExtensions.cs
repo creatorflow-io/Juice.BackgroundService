@@ -8,6 +8,7 @@ namespace Juice.BgService.Api
     {
         /// <summary>
         /// Configure SwaggerGen for Background Service
+        /// <para>bgservice-v1</para>
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
@@ -15,10 +16,10 @@ namespace Juice.BgService.Api
         {
             services.ConfigureSwaggerGen(c =>
             {
-                c.SwaggerDoc("bgservice-v1", new OpenApiInfo
+                c.SwaggerDoc("bgservice", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "Background Service API V1",
+                    Title = "Background Service API",
                     Description = "Provide background service control API"
                 });
 

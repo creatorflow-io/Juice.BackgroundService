@@ -1,4 +1,5 @@
-﻿using Juice.BgService.Api.BgService.Models;
+﻿using System.ComponentModel;
+using Juice.BgService.Api.BgService.Models;
 using Juice.BgService.Management;
 using Juice.BgService.Management.Extensions;
 using Microsoft.AspNetCore.Http;
@@ -6,13 +7,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Juice.BgService.Api
 {
+    /// <summary>
+    /// Control background service
+    /// </summary>
     [ApiController]
-    [Route("bgservice/api")]
-    public class ApiController : Controller
+    [Route("api/bgservice")]
+    [ApiExplorerSettings(GroupName = "bgservice")]
+    public class ServiceController : Controller
     {
         private IServiceManager _serviceManager;
 
-        public ApiController(IServiceManager serviceManager)
+        public ServiceController(IServiceManager serviceManager)
         {
             _serviceManager = serviceManager;
         }
