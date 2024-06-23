@@ -136,6 +136,7 @@ namespace Juice.BgService.Management
             {
                 State = ServiceState.StoppedUnexpectedly;
             }
+            Logging($"Service manager stopped with state {State}");
         }
 
         public override async Task RequestStopAsync(CancellationToken cancellationToken)
@@ -297,7 +298,9 @@ namespace Juice.BgService.Management
             base.Dispose(disposing);
         }
 
-        public void Logging(string message, LogLevel level = LogLevel.Information) { }
+        public void Logging(string message, LogLevel level = LogLevel.Information) {
+            _logger.Log(level, message);
+        }
 
     }
 }

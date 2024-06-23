@@ -89,23 +89,23 @@ app.MapHub<LogHub>("/loghub");
 
 app.UseBgServiceSwaggerUI();
 
-app.Lifetime.ApplicationStopping.Register(async () =>
-{
-    Console.WriteLine($"Trying to stop services...");
-    var service = app.Services.GetService<IServiceManager>();
-    if (service != null)
-    {
-        try
-        {
-            await service.StopAsync(default);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Failed to stop services. {ex.Message}");
-        }
-        Console.WriteLine($"Services stopped.");
-    }
-});
+//app.Lifetime.ApplicationStopping.Register(async () =>
+//{
+//    Console.WriteLine($"Trying to stop services...");
+//    var service = app.Services.GetService<IServiceManager>();
+//    if (service != null)
+//    {
+//        try
+//        {
+//            await service.StopAsync(default);
+//        }
+//        catch (Exception ex)
+//        {
+//            Console.WriteLine($"Failed to stop services. {ex.Message}");
+//        }
+//        Console.WriteLine($"Services stopped.");
+//    }
+//});
 
 await app.RunAsync();
 
