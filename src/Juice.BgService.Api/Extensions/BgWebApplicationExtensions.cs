@@ -10,11 +10,11 @@ namespace Juice.BgService.Api
         /// <param name="app"></param>
         public static void UseBgServiceSwaggerUI(this IApplicationBuilder app)
         {
-            app.UseSwagger(options => options.RouteTemplate = "bgservice/swagger/{documentName}/swagger.json");
+            app.UseSwagger(options => options.RouteTemplate = "api/swagger/{documentName}/swagger.json");
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("bgservice-v1/swagger.json", "Background Service API V1");
-                c.RoutePrefix = "bgservice/swagger";
+                c.SwaggerEndpoint("bgservice/swagger.json", "Background Service API");
+                c.RoutePrefix = "api/swagger";
             });
         }
 
