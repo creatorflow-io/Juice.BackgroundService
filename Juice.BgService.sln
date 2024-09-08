@@ -30,6 +30,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Juice.BgService.Tests.Share
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Juice.BgService.Tests.ReferencedService", "test\Juice.BgService.Tests.ReferencedService\Juice.BgService.Tests.ReferencedService.csproj", "{97BD8708-CDA2-47B4-9BBB-F18489465BDD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{827EAD58-9CB5-4411-97B0-BAFFACA529D6}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\alpha.yml = .github\workflows\alpha.yml
+		.github\workflows\beta.yml = .github\workflows\beta.yml
+		.github\workflows\build-test.yml = .github\workflows\build-test.yml
+		.github\workflows\nuget-release.yml = .github\workflows\nuget-release.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -86,6 +94,7 @@ Global
 		{05E4B4A1-1A03-472D-A898-33DC6B49FB5F} = {602474EE-1C88-469E-832E-AE06B00D2288}
 		{60711711-52AB-4FBA-8415-BD5F9D4C2E26} = {6931CF9C-705C-477D-BDAD-D87CFEDD0BF2}
 		{97BD8708-CDA2-47B4-9BBB-F18489465BDD} = {6931CF9C-705C-477D-BDAD-D87CFEDD0BF2}
+		{827EAD58-9CB5-4411-97B0-BAFFACA529D6} = {02534980-E667-49F1-961F-7EA64DDE63E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {46DC06F6-883A-4568-B0BA-0C90702C5583}

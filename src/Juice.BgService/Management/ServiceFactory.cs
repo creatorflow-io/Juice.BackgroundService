@@ -28,8 +28,10 @@ namespace Juice.BgService.Management
                     return CreateService<TModel>(type, _serviceProvider);
                 }
             }
-            catch (Exception)
-            { }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Failed to create service {typeAssemblyQualifiedName}");
+            }
 
             if (_pluginsManager?.Plugins?.Any() ?? false)
             {

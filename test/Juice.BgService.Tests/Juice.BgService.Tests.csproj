@@ -27,8 +27,8 @@
         <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="$(MicrosoftExtensionsVersion)" />
         <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="$(SignalRVersion)" />
 
-        <PackageReference Include="Juice.Extensions.Logging.File" Version="$(JuiceRefVersion)" />
-        <PackageReference Include="Juice.Extensions.Logging.SignalR" Version="$(JuiceRefVersion)" />
+        <PackageReference Include="Juice.Extensions.Logging.File" Version="$(JuiceVersion)" />
+        <PackageReference Include="Juice.Extensions.Logging.SignalR" Version="$(JuiceVersion)" />
     </ItemGroup>
 
     <ItemGroup>

@@ -27,13 +27,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-        <PackageReference Include="xunit" Version="2.4.2" />
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(TestSdk)" />
+        <PackageReference Include="xunit" Version="$(XUnitVersion)" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.8.*">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="coverlet.collector" Version="3.2.0">
+        <PackageReference Include="coverlet.collector" Version="6.0.*">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
@@ -45,9 +45,10 @@
     </ItemGroup>
 
     <ItemGroup Label="refs">
-        <PackageReference Include="Juice" Version="$(JuiceRefVersion)" />
-        <PackageReference Include="Juice.Extensions.Logging.File" Version="$(JuiceRefVersion)" />
-        <PackageReference Include="Juice.XUnit" Version="$(JuiceRefVersion)" />
+        <PackageReference Include="Juice" Version="$(JuiceVersion)" />
+        <PackageReference Include="Juice.Extensions.Logging.File" Version="$(JuiceVersion)" />
+        <PackageReference Include="Juice.Extensions.Logging.SignalR" Version="$(JuiceVersion)" />
+        <PackageReference Include="Juice.XUnit" Version="$(JuiceVersion)" />
     </ItemGroup>
 
     <ItemGroup>
