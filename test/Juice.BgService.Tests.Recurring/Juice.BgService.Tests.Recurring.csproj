@@ -43,11 +43,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Juice.Extensions.Logging.File" Version="$(JuiceRefVersion)" >
+        <PackageReference Include="Juice.Extensions.Logging.File" Version="$(JuiceVersion)" >
             <Private>false</Private>
             <ExcludeAssets>runtime</ExcludeAssets>
         </PackageReference>
-        <PackageReference Include="Juice.Extensions.Logging.SignalR" Version="$(JuiceRefVersion)">
+        <PackageReference Include="Juice.Extensions.Logging.SignalR" Version="$(JuiceVersion)">
             <Private>false</Private>
             <ExcludeAssets>runtime</ExcludeAssets>
         </PackageReference>

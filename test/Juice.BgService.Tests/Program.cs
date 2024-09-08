@@ -7,7 +7,6 @@ using Juice.BgService.FileWatcher;
 using Juice.BgService.Management;
 using Juice.BgService.Tests;
 using Juice.Extensions.Logging;
-using Juice.Extensions.Options;
 using Juice.Extensions.Swagger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
