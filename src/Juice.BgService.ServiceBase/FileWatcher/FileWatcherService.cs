@@ -22,6 +22,17 @@ namespace Juice.BgService.FileWatcher
             if (string.IsNullOrEmpty(monitorPath))
             {
                 SetState(ServiceState.Stopped, "MonitorPath was not configured");
+                return;
+            }
+            if (!Directory.Exists(monitorPath))
+            {
+                SetState(ServiceState.Stopped, "MonitorPath does not exist");
+                return;
+            }
+            if (string.IsNullOrEmpty(filter))
+            {
+                SetState(ServiceState.Stopped, "FileFilter was not configured");
+                return;
             }
             try
             {
@@ -66,7 +77,7 @@ namespace Juice.BgService.FileWatcher
 
                 try
                 {
-                    while (!_stopRequest.IsCancellationRequested)
+                    while (!(_stopRequest?.IsCancellationRequested ?? false))
                     {
                         if (State == ServiceState.Stopping || State == ServiceState.Restarting || State == ServiceState.RestartPending)
                         {
@@ -83,7 +94,7 @@ namespace Juice.BgService.FileWatcher
                         }
                         if (!Monitoring.Any())
                         {
-                            await Task.Delay(100, _shutdown.Token);
+                            await Task.Delay(100, _shutdown?.Token ?? default);
                         }
                     }
                 }
@@ -95,7 +106,7 @@ namespace Juice.BgService.FileWatcher
                     _logger.FailedToInvoke(ex.Message, ex);
                 }
             }
-            if (_shutdown.IsCancellationRequested || State == ServiceState.Stopping
+            if ((_shutdown?.IsCancellationRequested ?? false) || State == ServiceState.Stopping
                 || State == ServiceState.Restarting || State == ServiceState.RestartPending)
             {
                 State = ServiceState.Stopped;
