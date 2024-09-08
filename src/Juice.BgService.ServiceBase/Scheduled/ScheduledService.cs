@@ -73,16 +73,16 @@ namespace Juice.BgService.Scheduled
                             _nextProcessing = ScheduleOptions.Frequencies.NextOccursAt(_nextProcessing);
                         }
 
-                        await WaitAsync();
+                        await WaitAsync(_waitCancel.Token);
                     }
                     else if (_nextProcessing.HasValue)
                     {
-                        await WaitAsync();
+                        await WaitAsync(_waitCancel.Token);
                     }
                     else
                     {
                         _nextProcessing = ScheduleOptions.Frequencies.NextOccursAt(null, true);
-                        await WaitAsync();
+                        await WaitAsync(_waitCancel.Token);
                     }
                 }
                 catch (TaskCanceledException)
@@ -93,7 +93,7 @@ namespace Juice.BgService.Scheduled
                     _logger.FailedToInvoke(ex.Message, ex);
                 }
             }
-            if (_shutdown.IsCancellationRequested || State == ServiceState.Stopping
+            if ((_shutdown?.IsCancellationRequested ?? false) || State == ServiceState.Stopping
                 || State == ServiceState.Restarting || State == ServiceState.RestartPending)
             {
                 State = ServiceState.Stopped;
@@ -104,7 +104,7 @@ namespace Juice.BgService.Scheduled
             }
         }
 
-        private async Task WaitAsync()
+        private async Task WaitAsync(CancellationToken token)
         {
             if (State == ServiceState.Stopping || State == ServiceState.Restarting || State == ServiceState.RestartPending)
             {
@@ -119,24 +119,24 @@ namespace Juice.BgService.Scheduled
                     {
                         var sleep = _nextProcessing.Value - DateTimeOffset.Now;
                         var delay = Math.Max(Math.Min(sleep.TotalMilliseconds, 5000), 100);
-                        await Task.Delay((int)delay, _waitCancel.Token);
+                        await Task.Delay((int)delay, token);
                     }
                 }
                 else
                 {
-                    await Task.Delay(5000, _waitCancel.Token);
+                    await Task.Delay(5000, token);
                 }
             }
             catch (Exception)
             {
-                if (!_waitCancel.IsCancellationRequested)
+                if (!token.IsCancellationRequested)
                 {
                     throw;
                 }
             }
         }
 
-        public void CancelWait()
+        public void CancelWaiting()
         {
             _waitCancel?.Cancel();
         }

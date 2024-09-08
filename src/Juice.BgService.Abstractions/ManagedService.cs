@@ -36,7 +36,7 @@
                     _state = value;
                     _message = default;
                 }
-                if (changed) TriggerChanged(nameof(State));
+                if (changed) { TriggerChanged(nameof(State)); }
             }
         }
 
