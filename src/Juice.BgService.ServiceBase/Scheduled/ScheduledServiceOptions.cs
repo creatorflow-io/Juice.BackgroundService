@@ -26,9 +26,9 @@
     {
         public bool RunOnStartup { get; set; }
         public OccursType Occurs { get; set; }
-        public DailyFrequency Daily { get; set; }
-        public WeeklyFrequency Weekly { get; set; }
-        public MonthlyFrequency Monthly { get; set; }
+        public DailyFrequency? Daily { get; set; }
+        public WeeklyFrequency? Weekly { get; set; }
+        public MonthlyFrequency? Monthly { get; set; }
         private bool _occurred;
         public bool IsOccurred => _occurred;
         public void Occurred()
@@ -91,7 +91,7 @@
 
     public class WeeklyFrequency : DailyFrequency
     {
-        public DayOfWeek[] OnDays { get; set; }
+        public DayOfWeek[]? OnDays { get; set; }
         public DayOfWeek StartOfWeek { get; set; }
     }
 
@@ -110,7 +110,7 @@
         {
             return frequencies.Select(f => (f.Occurs != OccursType.Once || !f.IsOccurred) ? f.NextOccursAt(lastProcessed, isStartup) : default)
                 .Where(n => n.HasValue)
-                .OrderBy(n => n.Value)
+                .OrderBy(n => n!.Value)
                 .FirstOrDefault();
         }
 
@@ -120,28 +120,15 @@
             if (isStartup && frequency.RunOnStartup) { return DateTimeOffset.Now; }
 
             var daily = frequency.Occurs == OccursType.Daily ? frequency.Daily
-                : frequency.Occurs == OccursType.Weekly ? frequency.Weekly as DailyFrequency
-                : frequency.Occurs == OccursType.Monthly ? frequency.Monthly as DailyFrequency
+                : frequency.Occurs == OccursType.Weekly ? frequency.Weekly
+                : frequency.Occurs == OccursType.Monthly ? frequency.Monthly
                 : null;
 
             if (daily == null)
             {
                 return null;
             }
-
-            if (frequency.Occurs == OccursType.Daily)
-            {
-                return frequency.Daily.NextOccursAt(lastProcessed);
-            }
-            else if (frequency.Occurs == OccursType.Weekly)
-            {
-                return frequency.Weekly.NextOccursAt(lastProcessed);
-            }
-            else if (frequency.Occurs == OccursType.Monthly)
-            {
-                return frequency.Monthly.NextOccursAt(lastProcessed);
-            }
-            return null;
+            return daily.NextOccursAt(lastProcessed);
         }
         #region Daily
 
