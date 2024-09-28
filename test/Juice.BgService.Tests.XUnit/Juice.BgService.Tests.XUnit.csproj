@@ -45,8 +45,6 @@
     </ItemGroup>
 
     <ItemGroup Label="refs">
-        <PackageReference Include="Juice" Version="$(JuiceVersion)" />
-        <PackageReference Include="Juice.Extensions.Logging.File" Version="$(JuiceVersion)" />
         <PackageReference Include="Juice.Extensions.Logging.SignalR" Version="$(JuiceVersion)" />
         <PackageReference Include="Juice.XUnit" Version="$(JuiceVersion)" />
     </ItemGroup>

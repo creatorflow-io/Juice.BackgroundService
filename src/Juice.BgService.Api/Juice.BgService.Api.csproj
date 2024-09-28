@@ -9,7 +9,6 @@
 
     <ItemGroup>
         <PackageReference Include="Juice.AspNetCore" Version="$(JuiceVersion)"/>
-        <PackageReference Include="Juice.Extensions.Options" Version="$(JuiceVersion)"/>
         <ProjectReference Include="..\Juice.BgService\Juice.BgService.csproj" />
     </ItemGroup>
 
