@@ -32,15 +32,7 @@ namespace Juice.BgService.Management
             IConfigurationSection configuration)
             where TModel : class, IServiceModel
         {
-            builder.Services.ConfigureMutable<FileStoreOptions<TModel>>(configuration,
-                options =>
-                {
-                    var cfg = configuration.GetScalaredConfig<FileStoreOptions<TModel>>();
-                    if (cfg != null)
-                    {
-                        options.Services = cfg.Services;
-                    }
-                });
+            builder.Services.ConfigureMutable<FileStoreOptions<TModel>>(configuration);
             builder.Services.AddSingleton<IServiceRepository<TModel>, FileStore<TModel>>();
 
             return builder;

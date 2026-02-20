@@ -13,7 +13,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 var isService = !(Debugger.IsAttached || args.Contains("--console"));
-
+var netVersion = Environment.Version.Major;
+Console.WriteLine("Current .NET version: {0}", netVersion);
 WebApplicationOptions options = new()
 {
     ContentRootPath = AppContext.BaseDirectory,
