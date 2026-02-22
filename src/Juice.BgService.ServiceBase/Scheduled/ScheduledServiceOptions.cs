@@ -184,6 +184,7 @@
         /// </summary>
         /// <param name="daily"></param>
         /// <param name="dt"></param>
+        /// <param name="offset"></param>
         /// <returns></returns>
         public static (DateTimeOffset Start, DateTimeOffset End) GetDailyOccursRange(this DailyFrequency daily, DateTime dt, TimeSpan offset)
         {
@@ -202,6 +203,8 @@
         /// <summary>
         /// Get nearest occurs time of daily on today or next day when it occurs once at
         /// </summary>
+        /// <param name="daily"></param>
+        /// <param name="lastOccuredDate"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
         public static DateTimeOffset GetDailyOccursOnceAt(this DailyFrequency daily, DateTime lastOccuredDate, TimeSpan offset)
@@ -217,6 +220,7 @@
         /// <summary>
         /// Get next occurs time of WeeklyFrequency
         /// </summary>
+        /// <param name="weekly"></param>
         /// <param name="lastProcessed"></param>
         /// <returns></returns>
         public static DateTimeOffset NextOccursAt(this WeeklyFrequency weekly, DateTimeOffset? lastProcessed)
@@ -276,6 +280,7 @@
         /// <summary>
         /// Get next occurs date of WeeklyFrequency
         /// </summary>
+        /// <param name="weekly"></param>
         /// <param name="last"></param>
         /// <returns></returns>
         public static DateTime NextOccursDate(this WeeklyFrequency weekly, DateTime last)
@@ -389,6 +394,7 @@
         /// <summary>
         /// Get next occurs date of MonthlyFrequency
         /// </summary>
+        /// <param name="monthly"></param>
         /// <param name="last"></param>
         /// <returns></returns>
         public static DateTime NextOccursDate(this MonthlyFrequency monthly, DateTime last)
