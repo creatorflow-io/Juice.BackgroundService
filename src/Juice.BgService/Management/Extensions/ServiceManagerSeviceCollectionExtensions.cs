@@ -21,7 +21,7 @@ namespace Juice.BgService.Management
 
             services.AddSingleton<IServiceManager>(sp => sp.GetRequiredService<ServiceManager<TModel>>());
 
-            services.AddSingleton<IServiceFactory, ServiceFactory>();
+            services.AddSingleton<ServiceFactory>();
 
             services.AddHostedService(sp => sp.GetRequiredService<ServiceManager<TModel>>());
 
@@ -36,6 +36,19 @@ namespace Juice.BgService.Management
             builder.Services.AddSingleton<IServiceRepository<TModel>, FileStore<TModel>>();
 
             return builder;
+        }
+
+        /// <summary>
+        /// Registers a typed factory for a specific background service type <typeparamref name="TService"/>.
+        /// <see cref="ServiceFactory"/> will delegate instantiation of <typeparamref name="TService"/>
+        /// to <typeparamref name="TFactory"/> instead of using the default reflection-based path.
+        /// </summary>
+        public static IServiceCollection AddServiceFactory<TService, TFactory>(this IServiceCollection services)
+            where TService : class, IManagedService
+            where TFactory : class, IServiceFactory<TService>
+        {
+            services.AddSingleton<IServiceFactory<TService>, TFactory>();
+            return services;
         }
 
         public static void SeparateStoreFile<TModel>(this BgServiceBuilder<TModel> builder, string name, IConfigurationBuilder configuration,

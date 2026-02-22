@@ -1,10 +1,10 @@
-﻿using Juice.Plugins.Management;
+using Juice.Plugins.Management;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Juice.BgService.Management
 {
-    public class ServiceFactory : IServiceFactory
+    public class ServiceFactory
     {
         private IServiceProvider _serviceProvider;
         private IPluginsManager? _pluginsManager;
@@ -16,15 +16,21 @@ namespace Juice.BgService.Management
             _logger = serviceProvider.GetRequiredService<ILogger<ServiceFactory>>();
         }
 
-        public IManagedService? CreateService<TModel>(string typeAssemblyQualifiedName)
+        public IManagedService? CreateService<TModel>(TModel serviceModel)
             where TModel : class, IServiceModel
         {
+            var typeAssemblyQualifiedName = serviceModel.AssemblyQualifiedName;
             try
             {
                 var type = Type.GetType(typeAssemblyQualifiedName);
                 if (type != null && type.IsAssignableTo(typeof(IManagedService)))
                 {
                     _logger.LogInformation($"Found {type.Name} in app services");
+                    var result = TryCreateFromTypedFactory<TModel>(type, _serviceProvider);
+                    if (result != null)
+                    {
+                        return result;
+                    }
                     return CreateService<TModel>(type, _serviceProvider);
                 }
             }
@@ -47,25 +53,44 @@ namespace Juice.BgService.Management
                 .Select(p =>
                 {
                     var t = p.GetType(typeAssemblyQualifiedName);
-                    var r = t != null && t.IsAssignableTo(typeof(IManagedService))
-                        ? CreateService<TModel>(t, p.ServiceProvider!) : default;
-                    if (r != null)
+                    if (t != null && t.IsAssignableTo(typeof(IManagedService)))
                     {
-                        _logger.LogInformation($"Found {t!.Name} in plugin {p.Name}");
+                        var result = TryCreateFromTypedFactory<TModel>(t, p.ServiceProvider!);
+                        if (result != null)
+                        {
+                            _logger.LogInformation($"Found {t.Name} via typed factory in plugin {p.Name}");
+                            return result;
+                        }
+                        var r = CreateService<TModel>(t, p.ServiceProvider!);
+                        if (r != null)
+                        {
+                            _logger.LogInformation($"Found {t.Name} in plugin {p.Name}");
+                        }
+                        return r;
                     }
-                    return r;
+                    return default;
                 })
                 .FirstOrDefault(s => s != default);
         }
-        public bool IsServiceExists(string typeAssemblyQualifiedName)
+
+        public bool IsServiceExists(IServiceModel serviceModel)
         {
+            var typeAssemblyQualifiedName = serviceModel.AssemblyQualifiedName;
             try
             {
                 var type = Type.GetType(typeAssemblyQualifiedName);
-                if (type != null && type.IsAssignableTo(typeof(IManagedService)))
+                if (type != null)
                 {
-                    _logger.LogInformation($"Found {type.Name} in app services");
-                    return true;
+                    if (type.IsAssignableTo(typeof(IManagedService)))
+                    {
+                        _logger.LogInformation($"Found {type.Name} in app services");
+                        return true;
+                    }
+                    if (_serviceProvider.GetService(typeof(IServiceFactory<>).MakeGenericType(type)) != null)
+                    {
+                        _logger.LogInformation($"Found typed factory for {type.Name} in app services");
+                        return true;
+                    }
                 }
             }
             catch (Exception)
@@ -88,13 +113,45 @@ namespace Juice.BgService.Management
                     {
                         _logger.LogInformation($"Found {t!.Name} in plugin {p.Name}");
                     }
-                    var r = t != null && t.IsAssignableTo(typeof(IManagedService));
-                    if (r)
+                    if (t != null && t.IsAssignableTo(typeof(IManagedService)))
                     {
                         _logger.LogInformation($"Found {t!.Name} of type IManagedService in plugin {p.Name}");
+                        return true;
                     }
-                    return r;
+                    if (t != null && p.ServiceProvider?.GetService(typeof(IServiceFactory<>).MakeGenericType(t)) != null)
+                    {
+                        _logger.LogInformation($"Found typed factory for {t!.Name} in plugin {p.Name}");
+                        return true;
+                    }
+                    return false;
                 }) ?? false;
+        }
+
+        private IManagedService? TryCreateFromTypedFactory<TModel>(Type type, IServiceProvider serviceProvider)
+            where TModel : class, IServiceModel
+        {
+            try
+            {
+                var factoryType = typeof(IServiceFactory<>).MakeGenericType(type);
+                var factory = serviceProvider.GetService(factoryType);
+                if (factory == null)
+                {
+                    return null;
+                }
+                var createMethod = factoryType.GetMethod(nameof(IServiceFactory<IManagedService>.CreateService))!
+                    .MakeGenericMethod(typeof(TModel));
+                var result = (IManagedService?)createMethod.Invoke(factory, null);
+                if (result == null)
+                {
+                    _logger.LogDebug($"Typed factory for {type.Name} returned null, falling back to default creation");
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, $"Typed factory for {type.Name} threw an exception, falling back to default creation");
+                return null;
+            }
         }
 
         private static IManagedService? CreateService<TModel>(Type type, IServiceProvider serviceProvider)

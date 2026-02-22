@@ -9,7 +9,7 @@ namespace Juice.BgService.Management
         where TModel : class, IServiceModel
     {
         private readonly IServiceRepository<TModel> _serviceStore;
-        private readonly IServiceFactory _serviceFactory;
+        private readonly ServiceFactory _serviceFactory;
 
         public List<IManagedService> ManagedServices => _services;
         private List<IManagedService> _services = new List<IManagedService>();
@@ -23,7 +23,7 @@ namespace Juice.BgService.Management
         public ServiceManager(
             IOptionsMutable<ServiceManagerOptions> options,
             ILogger<ServiceManager<TModel>> logger,
-            IServiceFactory serviceFactory,
+            ServiceFactory serviceFactory,
             IServiceRepository<TModel> serviceStore) : base()
         {
             _options = options;
@@ -179,14 +179,14 @@ namespace Juice.BgService.Management
                     var startType = service.Options?.GetOption<StartupType>("StartupType") ?? StartupType.Auto;
                     threads = Math.Max(1, Math.Min(threads ?? 0, 10));
 
-                    if (!_serviceFactory.IsServiceExists(service.AssemblyQualifiedName))
+                    if (!_serviceFactory.IsServiceExists(service))
                     {
                         Logging($"Type {service.AssemblyQualifiedName} not found", LogLevel.Error);
                         continue;
                     }
                     for (var i = 0; i < threads; i++)
                     {
-                        var bgService = _serviceFactory.CreateService<TModel>(service.AssemblyQualifiedName);
+                        var bgService = _serviceFactory.CreateService<TModel>(service);
 
                         if (bgService != null)
                         {
