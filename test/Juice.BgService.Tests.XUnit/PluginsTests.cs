@@ -156,8 +156,8 @@ namespace Juice.BgService.Tests.XUnit
 
             _output.WriteLine(typeof(ServiceManager<ServiceModel>).Name);
 
-            var serviceFactory = serviceProvider.GetRequiredService<IServiceFactory>();
-            var service = serviceFactory.CreateService<ServiceModel>("Juice.BgService.Tests.RecurringService`1");
+            var serviceFactory = serviceProvider.GetRequiredService<ServiceFactory>();
+            var service = serviceFactory.CreateService<ServiceModel>(new ServiceModel { AssemblyQualifiedName = "Juice.BgService.Tests.RecurringService`1" });
             service.Should().NotBeNull();
 
             if (service is IManagedService<ServiceModel> service1)
