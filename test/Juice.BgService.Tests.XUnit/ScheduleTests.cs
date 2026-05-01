@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using Juice.BgService.Scheduled;
-using Xunit.Abstractions;
 
 namespace Juice.BgService.Tests.XUnit
 {

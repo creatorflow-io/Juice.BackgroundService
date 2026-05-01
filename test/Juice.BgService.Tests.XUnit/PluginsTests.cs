@@ -7,7 +7,6 @@ using Juice.XUnit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Xunit.Abstractions;
 
 namespace Juice.BgService.Tests.XUnit
 {
