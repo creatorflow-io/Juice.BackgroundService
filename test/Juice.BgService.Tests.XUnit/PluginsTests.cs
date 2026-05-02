@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Juice.BgService.Tests.XUnit
 {
-    [TestCaseOrderer("Juice.XUnit.PriorityOrderer", "Juice.XUnit")]
+    [TestCaseOrderer(typeof(PriorityOrderer))]
     public class PluginTests
     {
         private readonly ITestOutputHelper _output;

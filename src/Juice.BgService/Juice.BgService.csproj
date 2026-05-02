@@ -14,7 +14,7 @@
         <ProjectReference Include="..\Juice.BgService.Abstractions\Juice.BgService.Abstractions.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Juice.Plugins" Version="$(JuiceVersion)" />
+        <PackageReference Include="Juice.Plugins" Version="$(JuicePluginsVersion)" />
         <PackageReference Include="Juice.Extensions.Logging" Version="$(JuiceVersion)" />
         <PackageReference Include="Juice.Extensions.Options" Version="$(JuiceVersion)" />
     </ItemGroup>

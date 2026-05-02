@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>$(AppTargetFramework)</TargetFrameworks>
+        <TargetFrameworks>$(AppTestTargetFramework)</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
 
@@ -28,7 +28,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(TestSdk)" />
-        <PackageReference Include="xunit" Version="$(XUnitVersion)" />
+        <PackageReference Include="xunit.v3" Version="$(XUnitVersion)" />
         <PackageReference Include="xunit.runner.visualstudio" Version="$(XUnitRunnerVersion)">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
@@ -45,7 +45,7 @@
     </ItemGroup>
 
     <ItemGroup Label="refs">
-        <PackageReference Include="Juice.Extensions.Logging.SignalR" Version="$(JuiceVersion)" />
+        <PackageReference Include="Juice.Extensions.Logging.SignalR" Version="$(JuiceLoggingVersion)" />
         <PackageReference Include="Juice.XUnit" Version="$(JuiceVersion)" />
     </ItemGroup>
 
